@@ -19,7 +19,7 @@ namespace AzureStorageWrapper.Tests.Should
             var command = new DownloadBlobReference()
             {
                 Container = "tests",
-                Name = "011fe8ba50ce4f9",
+                Name = "046aa3b2ff07489",
                 Extension = "md",
                 ExpiresIn = 360,
             };
@@ -39,7 +39,7 @@ namespace AzureStorageWrapper.Tests.Should
             var command = new DownloadBlobReference()
             {
                 Container = "tests",
-                Name = "011fe8ba50ce4f9",
+                Name = "046aa3b2ff07489",
                 Extension = "md",
                 ExpiresIn = expiresIn,
             };
@@ -57,7 +57,7 @@ namespace AzureStorageWrapper.Tests.Should
             var command = new DownloadBlobReference()
             {
                 Container = "tests",
-                Name = "011fe8ba50ce4f9",
+                Name = "046aa3b2ff07489",
                 Extension = "md",
                 ExpiresIn = int.MaxValue,
             };

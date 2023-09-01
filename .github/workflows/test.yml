@@ -2,9 +2,9 @@ name: 🚨 test package
 
 on:
   push:
-    branches: [ "development" ]
+    branches: [ "dev" ]
   pull_request:
-    branches: [ "development" ]
+    branches: [ "dev" ]
 
   workflow_dispatch:
 
