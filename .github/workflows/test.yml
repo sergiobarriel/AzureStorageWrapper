@@ -1,4 +1,4 @@
-name: 🚨 test package
+name: test
 
 on:
   push:
