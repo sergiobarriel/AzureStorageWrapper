@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<Nullable>enable</Nullable>
+		<version>1.0.0</version>
+		<Title>AzureStorageWrapper</Title>
+		<Authors>Sergio Barriel</Authors>
+		<Description>Wrapper for Azure Storage, aimed at simplifying the file upload process and obtaining links for downloading them.</Description>
+		<PackageProjectUrl>https://github.com/sergiobarriel/azure.storage.wrapper</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/sergiobarriel/azure.storage.wrapper</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>azure-storage wrapper</PackageTags>
+		<PackageIcon>icon.png</PackageIcon>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="icon.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+</Project>
