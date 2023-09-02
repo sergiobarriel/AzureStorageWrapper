@@ -8,7 +8,7 @@ namespace AzureStorageWrapper.Tests
     {
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddAzureStorageWrapper(new AzureStorageWrapperConfiguration(GetConnectionString(), 360, 360));
+            serviceCollection.AddAzureStorageWrapper(new AzureStorageWrapperConfiguration(GetConnectionString(), maxSasUriExpiration: 360, defaultSasUriExpiration: 360));
         }
 
         private string GetConnectionString()
