@@ -2,10 +2,13 @@
 
 Wrapper for Azure Storage, aimed at simplifying the file upload process and obtaining links for downloading them.
 
-# CICD
+[![run tests](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/runt-tests.yml/badge.svg?branch=dev)](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests.yml) 
+[![run tests and deploy](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests-and-deploy.yml/badge.svg?branch=main)](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests-and-deploy.yml)
 
-| Branch | Action | Status |
-|--|--|--|
-| dev | test | [![test](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/test.yml/badge.svg?branch=dev)](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/test.yml) |
-| main | test & deploy to nuget.org | [![deploy](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/deploy.yml) |
+# Usage
 
+## Dependency injection
+
+## Upload blobs
+
+## Download blobs
