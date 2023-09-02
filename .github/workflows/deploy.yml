@@ -15,17 +15,17 @@ jobs:
           dotnet-version: '7.0.x'
 
       - name: '🧱 dotnet build'
-        run: dotnet build
+        run: 'dotnet build'
         working-directory: './src/AzureStorageWrapper/AzureStorageWrapper'
         
       - name: '🚨 dotnet test'
         run: dotnet test --environment AZURE_STORAGE_CONNECTION_STRING="${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}"
         working-directory: './src/AzureStorageWrapper/AzureStorageWrapper.Tests'
 
-      - name: '🚀 publish'
-        uses: brandedoutcast/publish-nuget@v2
-        with:
-          PROJECT_FILE_PATH: './src/AzureStorageWrapper/AzureStorageWrapper/AzureStorageWrapper.csproj'
-          VERSION_REGEX: '^\s*<Version>(.*)<\/Version>\s*$'
-          TAG_FORMAT: '*'
-          NUGET_KEY: ${{ secrets.NUGET_ORG_API_KEY }}
+      - name: '📦 dotnet pack'
+        run: 'dotnet pack --output-dir ../../package'
+        working-directory: './src/AzureStorageWrapper/AzureStorageWrapper'
+
+      - name: '🚀 nuget publish'
+        run: 'dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_ORG_API_KEY }}'
+        working-directory: './package'
