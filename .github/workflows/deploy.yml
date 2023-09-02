@@ -23,7 +23,7 @@ jobs:
         working-directory: './src/AzureStorageWrapper/AzureStorageWrapper.Tests'
 
       - name: '📦 dotnet pack'
-        run: 'dotnet pack --output-dir ../../package'
+        run: 'dotnet pack --output ../../package'
         working-directory: './src/AzureStorageWrapper/AzureStorageWrapper'
 
       - name: '🚀 nuget publish'
