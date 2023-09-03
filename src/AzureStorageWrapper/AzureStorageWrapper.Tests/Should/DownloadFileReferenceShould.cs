@@ -18,9 +18,9 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Container = "tests",
-                Folder = "9c953623d7c4473",
-                Name = "hello",
+                Container = "greetings",
+                Folder = "23ca3bafd024499",
+                Name = "greeting",
                 Extension = "md",
                 ExpiresIn = 360,
             };
@@ -39,9 +39,9 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Container = "tests",
-                Folder = "9c953623d7c4473",
-                Name = "hello",
+                Container = "greetings",
+                Folder = "23ca3bafd024499",
+                Name = "greeting",
                 Extension = "md",
                 ExpiresIn = expiresIn,
             };
@@ -58,9 +58,9 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Container = "tests",
-                Folder = "9c953623d7c4473",
-                Name = "hello",
+                Container = "greetings",
+                Folder = "23ca3bafd024499",
+                Name = "greeting",
                 Extension = "md",
                 ExpiresIn = int.MaxValue,
             };
@@ -76,8 +76,8 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Folder = "9c953623d7c4473",
-                Name = "hello",
+                Folder = "23ca3bafd024499",
+                Name = "greeting",
                 Extension = "md",
                 ExpiresIn = 360,
             };
@@ -93,8 +93,8 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Container = "tests",
-                Folder = "9c953623d7c4473",
+                Container = "greetings",
+                Folder = "23ca3bafd024499",
                 Extension = "md",
                 ExpiresIn = 360,
             };
@@ -110,9 +110,9 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Container = "tests",
-                Folder = "9c953623d7c4473",
-                Name = "hello",
+                Container = "greetings",
+                Folder = "23ca3bafd024499",
+                Name = "greeting",
                 ExpiresIn = 360,
             };
 
