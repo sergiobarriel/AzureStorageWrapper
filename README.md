@@ -31,7 +31,21 @@ public void ConfigureServices(IServiceCollection serviceCollection)
 ```
 ## Upload blobs
 
-You have 3 options to upload blobs:
+You have **3 options** to upload blobs, and regardless of the chosen upload mechanism, you will always receive this response.
+
+```csharp
+public class BlobReference
+{
+    public string Name { get; set; }
+    public string Extension { get; set; }
+    public string FullName { get; set; }
+    public string Container { get; set; }
+    public string Uri { get; set; }
+    public string SasUri { get; set; }
+    public DateTime SasExpires { get; set; }
+    public IDictionary<string, string> Metadata { get; set; }
+}
+```
 
 ### Base64
 
