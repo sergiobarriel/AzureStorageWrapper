@@ -1,5 +1,5 @@
 ﻿using AzureStorageWrapper;
-using AzureStorageWrapper.Models;
+using AzureStorageWrapper.Commands;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
@@ -21,11 +21,11 @@ namespace AzureStorageWrapper.Tests.Should
             var command = new UploadBytes()
             {
                 Bytes = bytes,
-                Container = "tests",
-                Name = "hello",
+                Container = "greetings",
+                Name = "greeting",
                 Extension = "md",
                 Metadata = new Dictionary<string, string>()
-                    {{"tests", "tests"}}
+                    {{"GREETING_PLACE", "Office"}}
             };
 
             await Assert.ThrowsAsync<Exception>(async () =>
@@ -38,7 +38,7 @@ namespace AzureStorageWrapper.Tests.Should
         [MemberData(nameof(WrongFileProperties))]
         public async Task UploadBytesFile_WithWrongFileProperties_ShouldThrowException(string container, string fileName, string fileExtension)
         {
-            var bytes = Convert.FromBase64String("SGVsbG8gd29ybGQh");
+            var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");
 
             var command = new UploadBytes()
             {
@@ -47,7 +47,7 @@ namespace AzureStorageWrapper.Tests.Should
                 Name = fileName,
                 Extension = fileExtension,
                 Metadata = new Dictionary<string, string>()
-                    {{"tests", "tests"}}
+                    {{"GREETING_PLACE", "Office"}}
             };
 
             await Assert.ThrowsAsync<Exception>(async () =>
@@ -60,13 +60,13 @@ namespace AzureStorageWrapper.Tests.Should
         [MemberData(nameof(WrongMetadata))]
         public async Task UploadBytesFile_WithWrongMetadata_ShouldUploadFile(Dictionary<string, string> properties)
         {
-            var bytes = Convert.FromBase64String("SGVsbG8gd29ybGQh");
+            var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");
 
             var command = new UploadBytes()
             {
                 Bytes = bytes,
-                Container = "tests",
-                Name = "hello",
+                Container = "greetings",
+                Name = "greeting",
                 Extension = "md",
                 Metadata = properties
             };
@@ -81,16 +81,16 @@ namespace AzureStorageWrapper.Tests.Should
         [Fact]
         public async Task UploadBytes_ShouldUploadFile()
         {
-            var bytes = Convert.FromBase64String("SGVsbG8gd29ybGQh");
+            var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");
 
             var response = await _azureStorageWrapper.UploadBlobAsync(new UploadBytes()
             {
                 Bytes = bytes,
-                Container = "tests",
-                Name = "hello",
+                Container = "greetings",
+                Name = "greeting",
                 Extension = "md",
                 Metadata = new Dictionary<string, string>()
-                    {{"tests", "tests"}}
+                    {{"GREETING_PLACE", "Office"}}
             });
 
             Assert.NotNull(response);

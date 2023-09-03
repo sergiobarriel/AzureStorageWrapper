@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace AzureStorageWrapper.Models
+namespace AzureStorageWrapper.Commands
 {
     public abstract class UploadBlob
     {
@@ -17,12 +17,5 @@ namespace AzureStorageWrapper.Models
         public Dictionary<string, string> Metadata { get; set; }
 
         public abstract Stream GetContent();
-
-        public string GetFullName(string generatedName)
-        {
-            return !string.IsNullOrEmpty(generatedName)
-                ? $"{generatedName}.{Extension}"
-                : $"{Name}.{Extension}";
-        }
     }
 }
