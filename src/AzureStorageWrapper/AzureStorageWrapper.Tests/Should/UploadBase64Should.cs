@@ -1,5 +1,6 @@
-﻿using AzureStorageWrapper;
-using AzureStorageWrapper.Models;
+﻿using System.Text.Json;
+using AzureStorageWrapper;
+using AzureStorageWrapper.Commands;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
@@ -97,6 +98,8 @@ namespace AzureStorageWrapper.Tests.Should
             var response = await _azureStorageWrapper.UploadBlobAsync(command);
 
             Assert.NotNull(response);
+
+            var x = JsonSerializer.Serialize(response);
 
             Assert.True(await PingAsync(response.SasUri));
         }

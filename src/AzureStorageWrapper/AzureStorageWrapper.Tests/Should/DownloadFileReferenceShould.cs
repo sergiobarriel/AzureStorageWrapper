@@ -1,5 +1,5 @@
 ﻿using AzureStorageWrapper;
-using AzureStorageWrapper.Models;
+using AzureStorageWrapper.Commands;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
@@ -19,7 +19,8 @@ namespace AzureStorageWrapper.Tests.Should
             var command = new DownloadBlobReference()
             {
                 Container = "tests",
-                Name = "046aa3b2ff07489",
+                Folder = "9c953623d7c4473",
+                Name = "hello",
                 Extension = "md",
                 ExpiresIn = 360,
             };
@@ -39,7 +40,8 @@ namespace AzureStorageWrapper.Tests.Should
             var command = new DownloadBlobReference()
             {
                 Container = "tests",
-                Name = "046aa3b2ff07489",
+                Folder = "9c953623d7c4473",
+                Name = "hello",
                 Extension = "md",
                 ExpiresIn = expiresIn,
             };
@@ -57,9 +59,61 @@ namespace AzureStorageWrapper.Tests.Should
             var command = new DownloadBlobReference()
             {
                 Container = "tests",
-                Name = "046aa3b2ff07489",
+                Folder = "9c953623d7c4473",
+                Name = "hello",
                 Extension = "md",
                 ExpiresIn = int.MaxValue,
+            };
+
+            await Assert.ThrowsAsync<Exception>(async () =>
+            {
+                _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
+            });
+        }
+        
+        [Fact]
+        public async Task DownloadBlobReference_WithoutContainer_ShouldThrowException()
+        {
+            var command = new DownloadBlobReference()
+            {
+                Folder = "9c953623d7c4473",
+                Name = "hello",
+                Extension = "md",
+                ExpiresIn = 360,
+            };
+
+            await Assert.ThrowsAsync<Exception>(async () =>
+            {
+                _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
+            });
+        }
+
+        [Fact]
+        public async Task DownloadBlobReference_WithoutName_ShouldThrowException()
+        {
+            var command = new DownloadBlobReference()
+            {
+                Container = "tests",
+                Folder = "9c953623d7c4473",
+                Extension = "md",
+                ExpiresIn = 360,
+            };
+
+            await Assert.ThrowsAsync<Exception>(async () =>
+            {
+                _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
+            });
+        }
+
+        [Fact]
+        public async Task DownloadBlobReference_WithoutExtension_ShouldThrowException()
+        {
+            var command = new DownloadBlobReference()
+            {
+                Container = "tests",
+                Folder = "9c953623d7c4473",
+                Name = "hello",
+                ExpiresIn = 360,
             };
 
             await Assert.ThrowsAsync<Exception>(async () =>

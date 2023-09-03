@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
+using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Responses;
-using AzureStorageWrapper.Models;
 
 namespace AzureStorageWrapper
 {

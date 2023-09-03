@@ -1,5 +1,5 @@
 ﻿using AzureStorageWrapper;
-using AzureStorageWrapper.Models;
+using AzureStorageWrapper.Commands;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace AzureStorageWrapper.Models
+namespace AzureStorageWrapper.Commands
 {
     public class UploadBytes : UploadBlob
     {

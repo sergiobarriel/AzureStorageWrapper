@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
+using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Responses;
-using AzureStorageWrapper.Models;
 
 namespace AzureStorageWrapper
 {
@@ -19,44 +19,44 @@ namespace AzureStorageWrapper
 
         public async Task<BlobReference> UploadBlobAsync(UploadBlob command)
         {
-            ValidateUploadBlobCommand(command);
+            Validate(command);
 
             var container = new BlobContainerClient(_configuration.ConnectionString, command.Container);
 
             await container.CreateIfNotExistsAsync();
 
-            var generatedName = GenerateBlobName();
+            var folder = Guid.NewGuid().ToString("N")[..15];
 
-            var blobPath = command.GetFullName(generatedName);
+            var path = $"{folder}/{command.Name}.{command.Extension}";
 
-            var blobClient = container.GetBlobClient(blobPath);
+            var blobClient = container.GetBlobClient(path);
 
             await blobClient.UploadAsync(command.GetContent(), overwrite: true);
 
             command.Metadata ??= new Dictionary<string, string>();
 
-            command.Metadata.TryAdd("TIMESTAMP", $"{DateTime.UtcNow}");
-            command.Metadata.TryAdd("ORIGINAL_FILE_NAME", command.Name);
-            command.Metadata.TryAdd("ORIGINAL_FILE_EXTENSION", command.Extension);
+            command.Metadata.TryAdd("ASW_FOLDER", folder);
+            command.Metadata.TryAdd("ASW_TIMESTAMP", $"{DateTime.UtcNow}");
 
             await blobClient.SetMetadataAsync(SanitizeDictionary(command.Metadata));
 
             var sasUri = await GetSasUriAsync(new GetSasUri()
             {
+                Folder = folder,
                 Container = command.Container,
-                Name = generatedName,
+                Name = command.Name,
                 Extension = command.Extension,
                 ExpiresIn = _configuration.DefaultSasUriExpiration,
-                Path = command.Path
             });
 
             var referenceEntity = new BlobReference()
             {
-                Uri = blobClient.Uri.AbsoluteUri,
-                SasUri = sasUri,
-                Name = generatedName,
+                Folder = folder,
+                Name = command.Name,
                 Extension = command.Extension,
                 FullName = blobClient.Name,
+                Uri = blobClient.Uri.AbsoluteUri,
+                SasUri = sasUri,
                 Metadata = command.Metadata,
                 Container = command.Container,
                 SasExpires = DateTime.UtcNow.AddSeconds(_configuration.DefaultSasUriExpiration)
@@ -68,16 +68,17 @@ namespace AzureStorageWrapper
 
         public async Task<BlobReference> DownloadBlobReferenceAsync(DownloadBlobReference command)
         {
-            ValidateDownloadBlobReferenceCommand(command);
+            Validate(command);
 
             var containerClient = new BlobContainerClient(_configuration.ConnectionString, command.Container);
 
-            var blobClient = containerClient.GetBlobClient($"{command.Name}.{command.Extension}");
+            var blobClient = containerClient.GetBlobClient($"{command.Folder}/{command.Name}.{command.Extension}");
 
             var blobProperties = await blobClient.GetPropertiesAsync();
 
             return new BlobReference()
             {
+                Folder = command.Folder,
                 Name = command.Name,
                 Extension = command.Extension,
                 FullName = blobClient.Name,
@@ -85,6 +86,7 @@ namespace AzureStorageWrapper
                 Uri = blobClient.Uri.AbsoluteUri,
                 SasUri = await GetSasUriAsync(new GetSasUri()
                 {
+                    Folder = command.Folder,
                     Container = command.Container,
                     Name = command.Name,
                     Extension = command.Extension,
@@ -100,11 +102,11 @@ namespace AzureStorageWrapper
 
         private async Task<string> GetSasUriAsync(GetSasUri command)
         {
-            ValidateGetSasUriCommand(command);
+            Validate(command);
 
             var container = new BlobContainerClient(_configuration.ConnectionString, command.Container);
 
-            var blobPath = command.GetFilePath();
+            var blobPath = command.GeneratePath();
 
             var blobClient = container.GetBlobClient(blobPath);
 

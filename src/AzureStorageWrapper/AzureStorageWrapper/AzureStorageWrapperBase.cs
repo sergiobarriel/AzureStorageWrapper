@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using AzureStorageWrapper.Models;
+using AzureStorageWrapper.Commands;
 
 namespace AzureStorageWrapper
 {
@@ -15,23 +15,25 @@ namespace AzureStorageWrapper
             _configuration = configuration;
         }
 
-        internal void ValidateUploadBlobCommand(UploadBlob command)
+        internal void Validate(UploadBlob command)
         {
             if (string.IsNullOrEmpty(command.Container)) throw new Exception($"{nameof(command.Container)} is empty!");
             if (string.IsNullOrEmpty(command.Name)) throw new Exception($"{nameof(command.Name)} is empty!");
             if (string.IsNullOrEmpty(command.Extension)) throw new Exception($"{nameof(command.Extension)} is empty!");
         }
 
-        internal void ValidateDownloadBlobReferenceCommand(DownloadBlobReference command)
+        internal void Validate(DownloadBlobReference command)
         {
+            //if (string.IsNullOrEmpty(command.Folder)) throw new Exception($"{nameof(command.Folder)} is empty!");
             if (string.IsNullOrEmpty(command.Container)) throw new Exception($"{nameof(command.Container)} is empty!");
             if (string.IsNullOrEmpty(command.Name)) throw new Exception($"{nameof(command.Name)} is empty!");
             if (string.IsNullOrEmpty(command.Extension)) throw new Exception($"{nameof(command.Extension)} is empty!");
         }
 
-        internal void ValidateGetSasUriCommand(GetSasUri command)
+        internal void Validate(GetSasUri command)
         {
             if (string.IsNullOrEmpty(command.Container)) throw new Exception($"{nameof(command.Container)} is empty!");
+            if (string.IsNullOrEmpty(command.Folder)) throw new Exception($"{nameof(command.Folder)} is empty!");
             if (string.IsNullOrEmpty(command.Name)) throw new Exception($"{nameof(command.Name)} is empty!");
             if (string.IsNullOrEmpty(command.Extension)) throw new Exception($"{nameof(command.Extension)} is empty!");
             
@@ -41,7 +43,7 @@ namespace AzureStorageWrapper
         /// <summary>
         /// ~2 centuries of work are needed in order to have a 1% probability of at least one collision: https://alex7kom.github.io/nano-nanoid-cc
         /// </summary>
-        internal string GenerateBlobName()
+        internal string GenerateId()
         {
             var guid = Guid.NewGuid().ToString("N");
 
