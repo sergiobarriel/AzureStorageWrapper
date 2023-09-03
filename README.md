@@ -1,3 +1,5 @@
+![Delivery truck](./src/AzureStorageWrapper/AzureStorageWrapper/icon.png)
+
 # AzureStorageWrapper
 
 **AzureStorageWrapper** it's a wrapper for Azure Storage **blob** service, aimed at simplifying the file upload process and obtaining links for downloading them.
