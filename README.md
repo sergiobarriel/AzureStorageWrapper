@@ -6,7 +6,8 @@
 
 [![run tests](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests.yml/badge.svg?branch=dev)](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests.yml) 
 [![run tests and deploy](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests-and-deploy.yml/badge.svg?branch=main)](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests-and-deploy.yml)
-[![AzureStorageWrapper on fuget.org](https://www.fuget.org/packages/AzureStorageWrapper/badge.svg)](https://www.fuget.org/packages/AzureStorageWrapper)
+
+📦 View package on [NuGet Gallery](https://www.nuget.org/packages/AzureStorageWrapper/)
 
 # Usage
 
