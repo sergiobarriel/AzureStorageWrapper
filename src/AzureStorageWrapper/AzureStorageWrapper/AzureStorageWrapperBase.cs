@@ -8,36 +8,53 @@ namespace AzureStorageWrapper
 {
     public abstract class AzureStorageWrapperBase
     {
-        private readonly AzureStorageWrapperConfiguration _configuration;
+        internal readonly AzureStorageWrapperConfiguration _configuration;
 
-        public AzureStorageWrapperBase(AzureStorageWrapperConfiguration configuration)
+        protected AzureStorageWrapperBase(AzureStorageWrapperConfiguration configuration)
         {
             _configuration = configuration;
         }
 
         internal void Validate(UploadBlob command)
         {
-            if (string.IsNullOrEmpty(command.Container)) throw new Exception($"{nameof(command.Container)} is empty!");
-            if (string.IsNullOrEmpty(command.Name)) throw new Exception($"{nameof(command.Name)} is empty!");
-            if (string.IsNullOrEmpty(command.Extension)) throw new Exception($"{nameof(command.Extension)} is empty!");
+            if (string.IsNullOrEmpty(command.Container))
+                throw new AzureStorageWrapperException($"{nameof(command.Container)} is empty!");
+
+            if (string.IsNullOrEmpty(command.Name))
+                throw new AzureStorageWrapperException($"{nameof(command.Name)} is empty!");
+
+            if (string.IsNullOrEmpty(command.Extension))
+                throw new AzureStorageWrapperException($"{nameof(command.Extension)} is empty!");
         }
 
         internal void Validate(DownloadBlobReference command)
         {
-            //if (string.IsNullOrEmpty(command.Folder)) throw new Exception($"{nameof(command.Folder)} is empty!");
-            if (string.IsNullOrEmpty(command.Container)) throw new Exception($"{nameof(command.Container)} is empty!");
-            if (string.IsNullOrEmpty(command.Name)) throw new Exception($"{nameof(command.Name)} is empty!");
-            if (string.IsNullOrEmpty(command.Extension)) throw new Exception($"{nameof(command.Extension)} is empty!");
+            if (string.IsNullOrEmpty(command.Container))
+                throw new AzureStorageWrapperException($"{nameof(command.Container)} is empty!");
+
+            if (string.IsNullOrEmpty(command.Name))
+                throw new AzureStorageWrapperException($"{nameof(command.Name)} is empty!");
+
+            if (string.IsNullOrEmpty(command.Extension))
+                throw new AzureStorageWrapperException($"{nameof(command.Extension)} is empty!");
         }
 
         internal void Validate(GetSasUri command)
         {
-            if (string.IsNullOrEmpty(command.Container)) throw new Exception($"{nameof(command.Container)} is empty!");
-            if (string.IsNullOrEmpty(command.Folder)) throw new Exception($"{nameof(command.Folder)} is empty!");
-            if (string.IsNullOrEmpty(command.Name)) throw new Exception($"{nameof(command.Name)} is empty!");
-            if (string.IsNullOrEmpty(command.Extension)) throw new Exception($"{nameof(command.Extension)} is empty!");
+            if (string.IsNullOrEmpty(command.Container))
+                throw new AzureStorageWrapperException($"{nameof(command.Container)} is empty!");
+
+            if (string.IsNullOrEmpty(command.Folder))
+                throw new AzureStorageWrapperException($"{nameof(command.Folder)} is empty!");
+
+            if (string.IsNullOrEmpty(command.Name))
+                throw new AzureStorageWrapperException($"{nameof(command.Name)} is empty!");
+
+            if (string.IsNullOrEmpty(command.Extension))
+                throw new AzureStorageWrapperException($"{nameof(command.Extension)} is empty!");
             
-            if (command.ExpiresIn > _configuration.MaxSasUriExpiration) throw new Exception($"{nameof(command.ExpiresIn)} should be lower than {_configuration.MaxSasUriExpiration}");
+            if (command.ExpiresIn > _configuration.MaxSasUriExpiration)
+                throw new AzureStorageWrapperException($"{nameof(command.ExpiresIn)} should be lower than {_configuration.MaxSasUriExpiration}");
         }
 
         /// <summary>

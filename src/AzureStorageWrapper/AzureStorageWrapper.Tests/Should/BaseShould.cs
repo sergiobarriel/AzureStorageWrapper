@@ -24,7 +24,8 @@
             new object[] { int.MinValue },
             new object[] { - 360 },
             new object[] { - 1 },
-            new object[] { 0 }
+            new object[] { 0 },
+            new object[] { null }
         };
 
         /// <summary>
@@ -34,11 +35,11 @@
         public static IEnumerable<object[]> WrongFileProperties() => new List<object[]>()
         {
             new object[] { "", "", "" },
-            new object[] { "tests", "", "" },
-            new object[] { "tests", "hello", "" },
+            new object[] { "greetings", "", "" },
+            new object[] { "greetings", "hello", "" },
             new object[] { "", "hello", "md" },
             new object[] { "", "", "md" },
-            new object[] { "tests", "", "md" },
+            new object[] { "greetings", "", "md" },
         };
     }
 }

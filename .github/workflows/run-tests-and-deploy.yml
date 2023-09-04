@@ -1,4 +1,4 @@
-name: deploy
+name: run tests & deploy
 
 on:
   workflow_dispatch:

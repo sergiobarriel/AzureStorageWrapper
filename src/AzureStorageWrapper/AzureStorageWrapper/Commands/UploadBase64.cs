@@ -9,7 +9,7 @@ namespace AzureStorageWrapper.Commands
 
         public override Stream GetContent()
         {
-            if (string.IsNullOrEmpty(Base64)) throw new Exception($"{nameof(Base64)} is empty");
+            if (string.IsNullOrEmpty(Base64)) throw new AzureStorageWrapperException($"{nameof(Base64)} is empty");
 
             var bytes = Convert.FromBase64String(Base64);
 

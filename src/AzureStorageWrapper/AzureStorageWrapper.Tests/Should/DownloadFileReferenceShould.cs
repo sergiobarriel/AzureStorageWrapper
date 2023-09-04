@@ -1,5 +1,4 @@
-﻿using AzureStorageWrapper;
-using AzureStorageWrapper.Commands;
+﻿using AzureStorageWrapper.Commands;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
@@ -65,7 +64,7 @@ namespace AzureStorageWrapper.Tests.Should
                 ExpiresIn = int.MaxValue,
             };
 
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
             {
                 _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
             });
@@ -82,7 +81,7 @@ namespace AzureStorageWrapper.Tests.Should
                 ExpiresIn = 360,
             };
 
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
             {
                 _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
             });
@@ -99,7 +98,7 @@ namespace AzureStorageWrapper.Tests.Should
                 ExpiresIn = 360,
             };
 
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
             {
                 _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
             });
@@ -116,7 +115,7 @@ namespace AzureStorageWrapper.Tests.Should
                 ExpiresIn = 360,
             };
 
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
             {
                 _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
             });

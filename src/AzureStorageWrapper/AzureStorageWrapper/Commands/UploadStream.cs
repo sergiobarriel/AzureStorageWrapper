@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace AzureStorageWrapper.Commands
 {
@@ -9,7 +8,7 @@ namespace AzureStorageWrapper.Commands
 
         public override Stream GetContent()
         {
-            if (Stream.Length == 0) throw new Exception($"{nameof(Stream)} length is 0");
+            if (Stream.Length == 0) throw new AzureStorageWrapperException($"{nameof(Stream)} length is 0");
 
             return Stream;
         }
