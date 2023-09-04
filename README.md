@@ -28,10 +28,10 @@ public void ConfigureServices(IServiceCollection serviceCollection)
 ```
 
 These are the main properties:
-- ConnectionString: the connection string of your Azure Storage Account
-- DefaultSasUriExpiration:
-- MaxSasUriExpiration:
-- CreateContainerIfNotExists:
+- **ConnectionString**: The connection string of your Azure Storage Account. You can export by following [this document](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage?tabs=azure-portal#view-account-access-keys)
+- **MaxSasUriExpiration**: You can set a maximum duration value for the Shared Access Signature (SAS) of an Azure Storage file to prevent someone from attempting to generate a token with a longer expiration time.
+- **DefaultSasUriExpiration**: You can download a file using AzureStorageWrapper without specifying the `ExpiresIn` property. By doing so, this value will be automatically set.
+- **CreateContainerIfNotExists**: When uploading a file to Azure Storage, you need to specify the container, which may not exist and can be created automatically. You can set it to `true` or `false` based on your requirements. Please consider this property if you have automated your infrastructure with any Infrastructure as Code (IaC) mechanism because it affects the state of your infrastructure.
 
 ## Upload blobs
 
@@ -133,6 +133,8 @@ In example, if you upload the file `greeting.md` file to container `greetings` y
 }
 ```
 
+It is your responsibility to save the references (folder, file name, and extension) of the file you have uploaded to Azure Storage somewhere, as you will need it for later downloads.
+
 ## Download blobs
 
 To download a blob reference, you need specify the *container*, the *file name* and *extension*.
@@ -192,3 +194,7 @@ var command = new DownloadBlobReference()
 var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
 
 ```
+
+# Support
+
+You can contact me via Twitter [@sergiobarriel](https://twitter.com/sergiobarriel), or if you have an [issue](https://github.com/sergiobarriel/azure.storage.wrapper/issues), you can open one 🙂
