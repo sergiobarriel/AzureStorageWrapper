@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using AzureStorageWrapper;
-using AzureStorageWrapper.Commands;
+﻿using AzureStorageWrapper.Commands;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
@@ -29,7 +27,7 @@ namespace AzureStorageWrapper.Tests.Should
                     {{"GREETING_PLACE", "Office"}}
             };
 
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
             {
                 _ = await _azureStorageWrapper.UploadBlobAsync(command);
             });
@@ -51,7 +49,7 @@ namespace AzureStorageWrapper.Tests.Should
                     {{"GREETING_PLACE", "Office"}}
             };
 
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
             {
                 _ = await _azureStorageWrapper.UploadBlobAsync(command);
             });
@@ -99,9 +97,8 @@ namespace AzureStorageWrapper.Tests.Should
 
             Assert.NotNull(response);
 
-            var x = JsonSerializer.Serialize(response);
-
             Assert.True(await PingAsync(response.SasUri));
         }
+
     }
 }

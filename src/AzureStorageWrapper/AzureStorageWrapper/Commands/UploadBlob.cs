@@ -13,7 +13,7 @@ namespace AzureStorageWrapper.Commands
         public string Name { get; set; }
         public string Extension { get; set; }
         public string Container { get; set; }
-        public string Path { get; set; }
+
         public Dictionary<string, string> Metadata { get; set; }
 
         public abstract Stream GetContent();

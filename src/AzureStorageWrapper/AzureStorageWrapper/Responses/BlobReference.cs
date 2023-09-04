@@ -11,8 +11,10 @@ namespace AzureStorageWrapper.Responses
         public string Extension { get; set; }
         public string FullName { get; set; }
         public string Uri { get; set; }
+
         public string SasUri { get; set; }
         public DateTime SasExpires { get; set; }
+
         public IDictionary<string, string> Metadata { get; set; }
     }
 }

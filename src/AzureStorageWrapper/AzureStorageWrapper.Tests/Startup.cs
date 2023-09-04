@@ -1,5 +1,4 @@
-﻿using AzureStorageWrapper;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AzureStorageWrapper.Tests
@@ -8,7 +7,13 @@ namespace AzureStorageWrapper.Tests
     {
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddAzureStorageWrapper(new AzureStorageWrapperConfiguration(GetConnectionString(), maxSasUriExpiration: 360, defaultSasUriExpiration: 360));
+            serviceCollection.AddAzureStorageWrapper(configuration =>
+            {
+                configuration.ConnectionString = GetConnectionString();
+                configuration.DefaultSasUriExpiration = 360;
+                configuration.MaxSasUriExpiration = 360;
+                configuration.CreateContainerIfNotExists = true;
+            });
         }
 
         private string GetConnectionString()

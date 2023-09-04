@@ -10,11 +10,9 @@ namespace AzureStorageWrapper
 {
     public class AzureStorageWrapper : AzureStorageWrapperBase, IAzureStorageWrapper
     {
-        private readonly AzureStorageWrapperConfiguration _configuration;
-
-        public AzureStorageWrapper(AzureStorageWrapperConfiguration configuration) : base(configuration) 
+        public AzureStorageWrapper(AzureStorageWrapperConfiguration configuration) : base(configuration)
         {
-            _configuration = configuration;
+
         }
 
         public async Task<BlobReference> UploadBlobAsync(UploadBlob command)
@@ -23,7 +21,12 @@ namespace AzureStorageWrapper
 
             var container = new BlobContainerClient(_configuration.ConnectionString, command.Container);
 
-            await container.CreateIfNotExistsAsync();
+            if (!await container.ExistsAsync())
+            {
+                if (_configuration.CreateContainerIfNotExists)
+                    await container.CreateIfNotExistsAsync();
+                else throw new AzureStorageWrapperException($"{command.Container} doesn't exists!");
+            }
 
             var folder = Guid.NewGuid().ToString("N")[..15];
 

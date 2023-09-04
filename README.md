@@ -6,31 +6,33 @@
 
 [![run tests](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests.yml/badge.svg?branch=dev)](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests.yml) 
 [![run tests and deploy](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests-and-deploy.yml/badge.svg?branch=main)](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests-and-deploy.yml)
+[![AzureStorageWrapper on fuget.org](https://www.fuget.org/packages/AzureStorageWrapper/badge.svg)](https://www.fuget.org/packages/AzureStorageWrapper)
 
 # Usage
 
 ## Dependency injection
 
-There are many ways to add **AzureStorageWrapper** to dependencies container, just add as you preffer:
-
-```csharp
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddAzureStorageWrapper(new AzureStorageWrapperConfiguration(
-    "azure-storage-connection-string",
-    maxSasUriExpiration: 360, 
-    defaultSasUriExpiration: 360));
-```
+To add **AzureStorageWrapper** to dependencies container, just use the method `AddAzureStorageWrapper`
 
 ```csharp
 public void ConfigureServices(IServiceCollection serviceCollection)
 {
-    serviceCollection.AddAzureStorageWrapper(new AzureStorageWrapperConfiguration(
-        "azure-storage-connection-string", 
-        maxSasUriExpiration: 360, 
-        defaultSasUriExpiration: 360));
+    serviceCollection.AddAzureStorageWrapper(configuration =>
+    {
+        configuration.ConnectionString = "azure-storage-connection-string"
+        configuration.DefaultSasUriExpiration = 360;
+        configuration.MaxSasUriExpiration = 360;
+        configuration.CreateContainerIfNotExists = true;
+    });
 }
 ```
+
+These are the main properties:
+- ConnectionString:
+- DefaultSasUriExpiration:
+- MaxSasUriExpiration:
+- CreateContainerIfNotExists:
+- 
 ## Upload blobs
 
 There are **3 options** to upload blobs, all the ways follow the same pattern:
