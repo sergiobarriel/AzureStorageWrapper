@@ -8,12 +8,13 @@
 [![run tests and deploy](https://github.com/sergiobarriel/AzureStorageWrapper/actions/workflows/run-tests-and-deploy.yml/badge.svg?branch=main)](https://github.com/sergiobarriel/AzureStorageWrapper/actions/workflows/run-tests-and-deploy.yml)
 
 📦 View package on [NuGet Gallery](https://www.nuget.org/packages/AzureStorageWrapper/)
+📦 View package on [nuget.info](https://nuget.info/packages/AzureStorageWrapper)
 
 # Usage
 
 ## Dependency injection
 
-To add **AzureStorageWrapper** to dependencies container, just use the method `AddAzureStorageWrapper`
+To add **AzureStorageWrapper** to dependencies container, just use the method `AddAzureStorageWrapper(...)`
 
 ```csharp
 public void ConfigureServices(IServiceCollection serviceCollection)
@@ -21,18 +22,32 @@ public void ConfigureServices(IServiceCollection serviceCollection)
     serviceCollection.AddAzureStorageWrapper(configuration =>
     {
         configuration.ConnectionString = "azure-storage-connection-string"
-        configuration.DefaultSasUriExpiration = 360;
-        configuration.MaxSasUriExpiration = 360;
+        configuration.DefaultSasUriExpiration = 300;
+        configuration.MaxSasUriExpiration = 600;
         configuration.CreateContainerIfNotExists = true;
     });
 }
 ```
 
-These are the main properties:
+These are the *main* properties:
 - **ConnectionString**: The connection string of your Azure Storage Account. You can export by following [this document](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage?tabs=azure-portal#view-account-access-keys)
-- **MaxSasUriExpiration**: You can set a maximum duration value for the Shared Access Signature (SAS) of an Azure Storage file to prevent someone from attempting to generate a token with a longer expiration time.
-- **DefaultSasUriExpiration**: You can download a file using AzureStorageWrapper without specifying the `ExpiresIn` property. By doing so, this value will be automatically set.
+- **MaxSasUriExpiration**: You can set a maximum duration value for the Shared Access Signature (SAS) of an Azure Storage file to prevent someone from attempting to generate a token with a longer expiration time. Expressed in seconds.
+- **DefaultSasUriExpiration**: You can download a file using AzureStorageWrapper without specifying the `ExpiresIn` property. By doing so, this value will be automatically set. Expressed in seconds
 - **CreateContainerIfNotExists**: When uploading a file to Azure Storage, you need to specify the container, which may not exist and can be created automatically. You can set it to `true` or `false` based on your requirements. Please consider this property if you have automated your infrastructure with any Infrastructure as Code (IaC) mechanism because it affects the state of your infrastructure.
+
+Then you can inject `IAzureStorageWrapper` into your services through constructor:
+
+```csharp
+public class MyService
+{
+    private IAzureStorageWrapper _storageWrapper;
+
+    public MyService(IAzureStorageWrapper storageWrapper)
+    {
+        _storageWrapper = storageWrapper;
+    }
+}
+```
 
 ## Upload blobs
 
@@ -143,18 +158,16 @@ To download a blob reference, you need specify the *container*, the *file name* 
 The *Folder* it's mandatory.
 
 ```csharp
-
 var command = new DownloadBlobReference()
 {
     Container = "greetings",
     Folder = "04bc4c89e547478",
     Name = "greeting",
     Extension = "md",
-    ExpiresIn = 360,
+    ExpiresIn = 60,
 };
 
 var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
-
 ```
 
 The response when *downloading* file reference resembles the response when *uploading* files:
@@ -189,7 +202,7 @@ var command = new DownloadBlobReference()
     Folder = "2020/08",
     Name = "file",
     Extension = "pdf",
-    ExpiresIn = 360,
+    ExpiresIn = 60,
 };
 
 var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
