@@ -1,33 +1,66 @@
-﻿namespace AzureStorageWrapper
+﻿using System.Runtime.InteropServices.ComTypes;
+
+namespace AzureStorageWrapper
 {
     public class AzureStorageWrapperConfiguration
     {
         public AzureStorageWrapperConfiguration() { }
 
-        public string ConnectionString { get; set; }
-        public int DefaultSasUriExpiration { get; set; }
-        public int MaxSasUriExpiration { get; set; }
-        public bool CreateContainerIfNotExists { get; set; }
-
-        internal void Validate()
+        private string _connectionString { get; set; }
+        public string ConnectionString
         {
-            ValidateConnectionString(ConnectionString);
-            ValidateMaxSasUriExpiration(MaxSasUriExpiration);
-            ValidateDefaultSasUriExpiration(DefaultSasUriExpiration);
-
-            void ValidateConnectionString(string connectionString)
+            get => _connectionString;
+            set
             {
-                if (string.IsNullOrEmpty(connectionString)) throw new AzureStorageWrapperException($"{nameof(connectionString)} is empty!");
+                if (string.IsNullOrEmpty(value))
+                    throw new AzureStorageWrapperException($"{nameof(ConnectionString)} is empty");
+
+                _connectionString = value;
             }
+        }
 
-            void ValidateMaxSasUriExpiration(int maxSasUriExpiration)
+        private int defaultSasUriExpiration;
+        public int DefaultSasUriExpiration
+        {
+            get => defaultSasUriExpiration;
+            set
             {
-                if (maxSasUriExpiration <= 0) throw new AzureStorageWrapperException($"{nameof(maxSasUriExpiration)} should be greater then zero");
+                if (value < 0)
+                    throw new AzureStorageWrapperException($"{nameof(DefaultSasUriExpiration)} should be greater than zero");
+                
+                if (value == 0)
+                    defaultSasUriExpiration = 360;
+                
+                defaultSasUriExpiration = value;
             }
+        }
 
-            void ValidateDefaultSasUriExpiration(int defaultSasUriExpiration)
+        private int _maxSasUriExpiration;
+        public int MaxSasUriExpiration
+        {
+            get => _maxSasUriExpiration;
+            set
             {
-                if (defaultSasUriExpiration <= 0) throw new AzureStorageWrapperException($"{nameof(defaultSasUriExpiration)} should be greater then zero");
+                if (value < 0)
+                    throw new AzureStorageWrapperException($"{nameof(MaxSasUriExpiration)} should be greater than zero");
+
+                if (value > DefaultSasUriExpiration)
+                    throw new AzureStorageWrapperException($"{nameof(MaxSasUriExpiration)} should be lower than {nameof(DefaultSasUriExpiration)}");
+
+                if (value == 0)
+                    _maxSasUriExpiration = 360;
+
+                _maxSasUriExpiration = value;
+            }
+        }
+
+        private bool _createContainerIfNotExists;
+        public bool CreateContainerIfNotExists
+        {
+            get => _createContainerIfNotExists;
+            set
+            {
+                _createContainerIfNotExists = value;
             }
         }
     }

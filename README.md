@@ -28,11 +28,11 @@ public void ConfigureServices(IServiceCollection serviceCollection)
 ```
 
 These are the main properties:
-- ConnectionString:
+- ConnectionString: the connection string of your Azure Storage Account
 - DefaultSasUriExpiration:
 - MaxSasUriExpiration:
 - CreateContainerIfNotExists:
-- 
+
 ## Upload blobs
 
 There are **3 options** to upload blobs, all the ways follow the same pattern:
