@@ -1,11 +1,11 @@
-![AzureStorageWrapper poster](https://raw.githubusercontent.com/sergiobarriel/azure.storage.wrapper/main/images/poster.png)
+![AzureStorageWrapper poster](https://raw.githubusercontent.com/sergiobarriel/AzureStorageWrapper/main/images/poster.png)
 
 # AzureStorageWrapper
 
 **AzureStorageWrapper** it's a wrapper for Azure Storage **blob** service, aimed at simplifying the file upload process and obtaining links for downloading them.
 
-[![run tests](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests.yml/badge.svg?branch=dev)](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests.yml) 
-[![run tests and deploy](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests-and-deploy.yml/badge.svg?branch=main)](https://github.com/sergiobarriel/azure.storage.wrapper/actions/workflows/run-tests-and-deploy.yml)
+[![run tests](https://github.com/sergiobarriel/AzureStorageWrapper/actions/workflows/run-tests.yml/badge.svg?branch=dev)](https://github.com/sergiobarriel/AzureStorageWrapper/actions/workflows/run-tests.yml) 
+[![run tests and deploy](https://github.com/sergiobarriel/AzureStorageWrapper/actions/workflows/run-tests-and-deploy.yml/badge.svg?branch=main)](https://github.com/sergiobarriel/AzureStorageWrapper/actions/workflows/run-tests-and-deploy.yml)
 
 📦 View package on [NuGet Gallery](https://www.nuget.org/packages/AzureStorageWrapper/)
 
@@ -198,4 +198,4 @@ var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
 
 # Support
 
-You can contact me via Twitter [@sergiobarriel](https://twitter.com/sergiobarriel), or if you have an [issue](https://github.com/sergiobarriel/azure.storage.wrapper/issues), you can open one 🙂
+You can contact me via Twitter [@sergiobarriel](https://twitter.com/sergiobarriel), or if you have an [issue](https://github.com/sergiobarriel/AzureStorageWrapper/issues), you can open one 🙂
