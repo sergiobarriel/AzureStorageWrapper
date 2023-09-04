@@ -1,4 +1,4 @@
-![Delivery truck](https://raw.githubusercontent.com/sergiobarriel/azure.storage.wrapper/main/src/AzureStorageWrapper/AzureStorageWrapper/icon.png)
+![AzureStorageWrapper poster](https://raw.githubusercontent.com/sergiobarriel/azure.storage.wrapper/main/images/poster.png)
 
 # AzureStorageWrapper
 
