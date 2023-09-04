@@ -12,10 +12,25 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>azure-storage wrapper</PackageTags>
 		<PackageIcon>icon.png</PackageIcon>
+		<Copyright>MIT License</Copyright>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<IncludeSymbols>False</IncludeSymbols>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <None Remove="AzureStorageWrapper.cs~RF4861f87c.TMP" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\..\LICENSE">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 
 	<ItemGroup>
