@@ -19,10 +19,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="AzureStorageWrapper.cs~RF4861f87c.TMP" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Include="..\..\..\images\icon.png">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
