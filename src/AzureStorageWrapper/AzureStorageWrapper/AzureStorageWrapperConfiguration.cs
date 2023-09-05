@@ -4,7 +4,10 @@ namespace AzureStorageWrapper
 {
     public class AzureStorageWrapperConfiguration
     {
-        public AzureStorageWrapperConfiguration() { }
+        public AzureStorageWrapperConfiguration()
+        {
+            MaxSasUriExpiration = int.MaxValue;
+        }
 
         private string _connectionString { get; set; }
         public string ConnectionString
@@ -16,6 +19,22 @@ namespace AzureStorageWrapper
                     throw new AzureStorageWrapperException($"{nameof(ConnectionString)} is empty");
 
                 _connectionString = value;
+            }
+        }
+
+        private int _maxSasUriExpiration;
+        public int MaxSasUriExpiration
+        {
+            get => _maxSasUriExpiration;
+            set
+            {
+                if (value < 0)
+                    throw new AzureStorageWrapperException($"{nameof(MaxSasUriExpiration)} should be greater than zero");
+
+                if (value == 0)
+                    _maxSasUriExpiration = 360;
+
+                _maxSasUriExpiration = value;
             }
         }
 
@@ -39,21 +58,7 @@ namespace AzureStorageWrapper
             }
         }
 
-        private int _maxSasUriExpiration;
-        public int MaxSasUriExpiration
-        {
-            get => _maxSasUriExpiration;
-            set
-            {
-                if (value < 0)
-                    throw new AzureStorageWrapperException($"{nameof(MaxSasUriExpiration)} should be greater than zero");
-
-                if (value == 0)
-                    _maxSasUriExpiration = 360;
-
-                _maxSasUriExpiration = value;
-            }
-        }
+ 
 
         private bool _createContainerIfNotExists;
         public bool CreateContainerIfNotExists

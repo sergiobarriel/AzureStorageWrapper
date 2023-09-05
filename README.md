@@ -22,8 +22,8 @@ public void ConfigureServices(IServiceCollection serviceCollection)
     serviceCollection.AddAzureStorageWrapper(configuration =>
     {
         configuration.ConnectionString = "azure-storage-connection-string"
-        configuration.DefaultSasUriExpiration = 300;
         configuration.MaxSasUriExpiration = 600;
+        configuration.DefaultSasUriExpiration = 300;
         configuration.CreateContainerIfNotExists = true;
     });
 }
