@@ -4,7 +4,10 @@ namespace AzureStorageWrapper
 {
     public class AzureStorageWrapperConfiguration
     {
-        public AzureStorageWrapperConfiguration() { }
+        public AzureStorageWrapperConfiguration()
+        {
+            MaxSasUriExpiration = int.MaxValue;
+        }
 
         private string _connectionString { get; set; }
         public string ConnectionString
@@ -19,6 +22,22 @@ namespace AzureStorageWrapper
             }
         }
 
+        private int _maxSasUriExpiration;
+        public int MaxSasUriExpiration
+        {
+            get => _maxSasUriExpiration;
+            set
+            {
+                if (value < 0)
+                    throw new AzureStorageWrapperException($"{nameof(MaxSasUriExpiration)} should be greater than zero");
+
+                if (value == 0)
+                    _maxSasUriExpiration = 360;
+
+                _maxSasUriExpiration = value;
+            }
+        }
+
         private int defaultSasUriExpiration;
         public int DefaultSasUriExpiration
         {
@@ -30,29 +49,16 @@ namespace AzureStorageWrapper
                 
                 if (value == 0)
                     defaultSasUriExpiration = 360;
-                
+
+                if (value > MaxSasUriExpiration)
+                    throw new AzureStorageWrapperException($"{nameof(DefaultSasUriExpiration)} should be lower than {nameof(MaxSasUriExpiration)}");
+
+
                 defaultSasUriExpiration = value;
             }
         }
 
-        private int _maxSasUriExpiration;
-        public int MaxSasUriExpiration
-        {
-            get => _maxSasUriExpiration;
-            set
-            {
-                if (value < 0)
-                    throw new AzureStorageWrapperException($"{nameof(MaxSasUriExpiration)} should be greater than zero");
-
-                if (value > DefaultSasUriExpiration)
-                    throw new AzureStorageWrapperException($"{nameof(MaxSasUriExpiration)} should be lower than {nameof(DefaultSasUriExpiration)}");
-
-                if (value == 0)
-                    _maxSasUriExpiration = 360;
-
-                _maxSasUriExpiration = value;
-            }
-        }
+ 
 
         private bool _createContainerIfNotExists;
         public bool CreateContainerIfNotExists

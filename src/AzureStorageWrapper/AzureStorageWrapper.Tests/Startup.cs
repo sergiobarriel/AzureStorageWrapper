@@ -10,8 +10,8 @@ namespace AzureStorageWrapper.Tests
             serviceCollection.AddAzureStorageWrapper(configuration =>
             {
                 configuration.ConnectionString = GetConnectionString();
-                configuration.DefaultSasUriExpiration = 360;
                 configuration.MaxSasUriExpiration = 360;
+                configuration.DefaultSasUriExpiration = 360;
                 configuration.CreateContainerIfNotExists = true;
             });
         }
