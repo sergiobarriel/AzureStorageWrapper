@@ -17,10 +17,7 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Container = "greetings",
-                Folder = "23ca3bafd024499",
-                Name = "greeting",
-                Extension = "md",
+                Uri = ExistingBlobUri,
                 ExpiresIn = 360,
             };
 
@@ -31,6 +28,39 @@ namespace AzureStorageWrapper.Tests.Should
             Assert.True(await PingAsync(response.SasUri));
         }
 
+        [Fact]
+        public async Task DownloadBlobReference_WithWrongUri_ShouldThrowException()
+        {
+            var command = new DownloadBlobReference()
+            {
+                Uri = string.Empty,
+                ExpiresIn = 360,
+            };
+
+
+            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
+            {
+                _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
+            });
+        }
+
+
+        [Fact]
+        public async Task DownloadBlobReference_WithUnExistingUri_ShouldThrowException()
+        {
+            var command = new DownloadBlobReference()
+            {
+                Uri = UnExistingBlobUri,
+                ExpiresIn = 360,
+            };
+
+
+            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
+            {
+                _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
+            });
+        }
+
 
         [Theory]
         [MemberData(nameof(WrongExpiresIn))]
@@ -38,10 +68,7 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Container = "greetings",
-                Folder = "23ca3bafd024499",
-                Name = "greeting",
-                Extension = "md",
+                Uri = ExistingBlobUri,
                 ExpiresIn = expiresIn,
             };
 
@@ -57,10 +84,7 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Container = "greetings",
-                Folder = "23ca3bafd024499",
-                Name = "greeting",
-                Extension = "md",
+                Uri = ExistingBlobUri,
                 ExpiresIn = int.MaxValue,
             };
 
@@ -70,55 +94,5 @@ namespace AzureStorageWrapper.Tests.Should
             });
         }
         
-        [Fact]
-        public async Task DownloadBlobReference_WithoutContainer_ShouldThrowException()
-        {
-            var command = new DownloadBlobReference()
-            {
-                Folder = "23ca3bafd024499",
-                Name = "greeting",
-                Extension = "md",
-                ExpiresIn = 360,
-            };
-
-            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
-            {
-                _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
-            });
-        }
-
-        [Fact]
-        public async Task DownloadBlobReference_WithoutName_ShouldThrowException()
-        {
-            var command = new DownloadBlobReference()
-            {
-                Container = "greetings",
-                Folder = "23ca3bafd024499",
-                Extension = "md",
-                ExpiresIn = 360,
-            };
-
-            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
-            {
-                _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
-            });
-        }
-
-        [Fact]
-        public async Task DownloadBlobReference_WithoutExtension_ShouldThrowException()
-        {
-            var command = new DownloadBlobReference()
-            {
-                Container = "greetings",
-                Folder = "23ca3bafd024499",
-                Name = "greeting",
-                ExpiresIn = 360,
-            };
-
-            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
-            {
-                _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
-            });
-        }
     }
 }
