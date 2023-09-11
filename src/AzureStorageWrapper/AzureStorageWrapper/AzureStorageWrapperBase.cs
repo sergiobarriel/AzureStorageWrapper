@@ -29,30 +29,24 @@ namespace AzureStorageWrapper
 
         internal void Validate(DownloadBlobReference command)
         {
-            if (string.IsNullOrEmpty(command.Container))
-                throw new AzureStorageWrapperException($"{nameof(command.Container)} is empty!");
+            if (string.IsNullOrEmpty(command.Uri))
+                throw new AzureStorageWrapperException($"{nameof(command.Uri)} is empty!");
 
-            if (string.IsNullOrEmpty(command.Name))
-                throw new AzureStorageWrapperException($"{nameof(command.Name)} is empty!");
+            if (command.ExpiresIn > _configuration.MaxSasUriExpiration)
+                throw new AzureStorageWrapperException($"{nameof(command.ExpiresIn)} should be lower than {_configuration.MaxSasUriExpiration}");
+        }
 
-            if (string.IsNullOrEmpty(command.Extension))
-                throw new AzureStorageWrapperException($"{nameof(command.Extension)} is empty!");
+        internal void Validate(DeleteBlob command)
+        {
+            if (string.IsNullOrEmpty(command.Uri))
+                throw new AzureStorageWrapperException($"{nameof(command.Uri)} is empty!");
         }
 
         internal void Validate(GetSasUri command)
         {
-            if (string.IsNullOrEmpty(command.Container))
-                throw new AzureStorageWrapperException($"{nameof(command.Container)} is empty!");
+            if (string.IsNullOrEmpty(command.Uri))
+                throw new AzureStorageWrapperException($"{nameof(command.Uri)} is empty!");
 
-            if (string.IsNullOrEmpty(command.Folder))
-                throw new AzureStorageWrapperException($"{nameof(command.Folder)} is empty!");
-
-            if (string.IsNullOrEmpty(command.Name))
-                throw new AzureStorageWrapperException($"{nameof(command.Name)} is empty!");
-
-            if (string.IsNullOrEmpty(command.Extension))
-                throw new AzureStorageWrapperException($"{nameof(command.Extension)} is empty!");
-            
             if (command.ExpiresIn > _configuration.MaxSasUriExpiration)
                 throw new AzureStorageWrapperException($"{nameof(command.ExpiresIn)} should be lower than {_configuration.MaxSasUriExpiration}");
         }

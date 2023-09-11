@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-
-namespace AzureStorageWrapper
+﻿namespace AzureStorageWrapper
 {
     public class AzureStorageWrapperConfiguration
     {

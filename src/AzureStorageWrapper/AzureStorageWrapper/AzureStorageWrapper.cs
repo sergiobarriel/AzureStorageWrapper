@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
@@ -20,7 +21,7 @@ namespace AzureStorageWrapper
             Validate(command);
 
             var container = new BlobContainerClient(_configuration.ConnectionString, command.Container);
-
+            
             if (!await container.ExistsAsync())
             {
                 if (_configuration.CreateContainerIfNotExists)
@@ -45,73 +46,86 @@ namespace AzureStorageWrapper
 
             var sasUri = await GetSasUriAsync(new GetSasUri()
             {
-                Folder = folder,
-                Container = command.Container,
-                Name = command.Name,
-                Extension = command.Extension,
+                Uri = blobClient.Uri.AbsoluteUri,
                 ExpiresIn = _configuration.DefaultSasUriExpiration,
             });
 
             var referenceEntity = new BlobReference()
             {
-                Folder = folder,
+                Container = command.Container,
                 Name = command.Name,
                 Extension = command.Extension,
-                FullName = blobClient.Name,
                 Uri = blobClient.Uri.AbsoluteUri,
                 SasUri = sasUri,
                 Metadata = command.Metadata,
-                Container = command.Container,
                 SasExpires = DateTime.UtcNow.AddSeconds(_configuration.DefaultSasUriExpiration)
             };
 
             return referenceEntity;
         }
 
-
         public async Task<BlobReference> DownloadBlobReferenceAsync(DownloadBlobReference command)
         {
             Validate(command);
 
-            var containerClient = new BlobContainerClient(_configuration.ConnectionString, command.Container);
+            var container = new BlobContainerClient(_configuration.ConnectionString, GetContainerFromUri(command.Uri));
 
-            var blobClient = containerClient.GetBlobClient($"{command.Folder}/{command.Name}.{command.Extension}");
+            if (! await container.ExistsAsync())
+                throw new AzureStorageWrapperException($"{GetContainerFromUri(command.Uri)} doesn't exists!");
+            
+            var blobClient = container.GetBlobClient(GetBlobNameFromUri(command.Uri));
+
+            if (! await blobClient.ExistsAsync())
+                throw new AzureStorageWrapperException($"Uri {command.Uri} doesn't exists!");
 
             var blobProperties = await blobClient.GetPropertiesAsync();
 
+            var fileNameAndExtension = GetFileNameFromUri(command.Uri);
+
             return new BlobReference()
             {
-                Folder = command.Folder,
-                Name = command.Name,
-                Extension = command.Extension,
-                FullName = blobClient.Name,
-                Container = command.Container,
+                Container = blobClient.BlobContainerName,
+                Name = fileNameAndExtension.name,
+                Extension = fileNameAndExtension.extension,
                 Uri = blobClient.Uri.AbsoluteUri,
                 SasUri = await GetSasUriAsync(new GetSasUri()
                 {
-                    Folder = command.Folder,
-                    Container = command.Container,
-                    Name = command.Name,
-                    Extension = command.Extension,
-                    ExpiresIn = command.ExpiresIn <= 0 
-                        ? _configuration.DefaultSasUriExpiration 
+                    Uri = command.Uri,
+                    ExpiresIn = command.ExpiresIn <= 0
+                        ? _configuration.DefaultSasUriExpiration
                         : command.ExpiresIn,
                 }),
                 SasExpires = DateTime.MaxValue,
                 Metadata = blobProperties.Value.Metadata,
             };
+        }
 
+        public async Task DeleteBlobAsync(DeleteBlob command)
+        {
+            Validate(command);
+
+            var container = new BlobContainerClient(_configuration.ConnectionString, GetContainerFromUri(command.Uri));
+
+            if (!await container.ExistsAsync())
+                throw new AzureStorageWrapperException($"{GetContainerFromUri(command.Uri)} doesn't exists!");
+
+            var blobClient = container.GetBlobClient(GetBlobNameFromUri(command.Uri));
+
+            if (!await blobClient.ExistsAsync())
+                throw new AzureStorageWrapperException($"Uri {command.Uri} doesn't exists!");
+
+            await blobClient.DeleteIfExistsAsync();
         }
 
         private async Task<string> GetSasUriAsync(GetSasUri command)
         {
             Validate(command);
 
-            var container = new BlobContainerClient(_configuration.ConnectionString, command.Container);
+            var container = new BlobContainerClient(_configuration.ConnectionString, GetContainerFromUri(command.Uri));
 
-            var blobPath = command.GeneratePath();
+            var path = GetBlobNameFromUri(command.Uri);
 
-            var blobClient = container.GetBlobClient(blobPath);
+            var blobClient = container.GetBlobClient(path);
 
             if (!await blobClient.ExistsAsync()) return null;
 
@@ -120,6 +134,29 @@ namespace AzureStorageWrapper
             return blobSasUri.AbsoluteUri;
         }
 
-        
+        private (string name, string extension) GetFileNameFromUri(string uri)
+        {
+            var uriObject = new Uri(uri);
+
+            var fileName = string.Join(string.Empty, uriObject.Segments.Last());
+
+            var parts = fileName.Split(".");
+
+            return (name: parts[0], extension: parts[1]);
+        }
+
+        private string GetContainerFromUri(string uri)
+        {
+            var uriObject = new Uri(uri);
+
+            return uriObject.Segments[1].TrimEnd('/');
+        }
+
+        private string GetBlobNameFromUri(string uri)
+        {
+            var uriObject = new Uri(uri);
+
+            return string.Join(string.Empty, uriObject.Segments[2..]);
+        }
     }
 }

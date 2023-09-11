@@ -117,11 +117,9 @@ Regardless of the chosen upload mechanism, you will always receive this response
 ```csharp
 public class BlobReference
 {
-    public string Folder { get;set; }
+    public string Container { get; set; }
     public string Name { get; set; }
     public string Extension { get; set; }
-    public string FullName { get; set; }
-    public string Container { get; set; }
     public string Uri { get; set; }
     public string SasUri { get; set; }
     public DateTime SasExpires { get; set; }
@@ -134,10 +132,8 @@ In example, if you upload the file `greeting.md` file to container `greetings` y
 ```json
 {
     "Container": "greetings",
-    "Folder": "5a19306fc5014a4",
     "Name": "greeting",
     "Extension": "md",
-    "FullName": "5a19306fc5014a4/greeting.md",
     "Uri": "https://stgazstgwrapper001westeu.blob.core.windows.net/tests/5a19306fc5014a4/greeting.md",
     "SasUri": "https://stgazstgwrapper001westeu.blob.core.windows.net/tests/5a19306fc5014a4/greeting.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
     "SasExpires": "2023-09-03T16:17:02.8220993Z",
@@ -149,21 +145,18 @@ In example, if you upload the file `greeting.md` file to container `greetings` y
 }
 ```
 
-It is your responsibility to save the references (folder, file name, and extension) of the file you have uploaded to Azure Storage somewhere, as you will need it for later downloads.
+It is your responsibility to save the reference (URI property) of the file you have uploaded to Azure Storage somewhere, as you will need it for later downloads.
 
 ## Download blobs
 
-To download a blob reference, you need specify the *container*, the *file name* and *extension*.
+To download a blob reference, you need specify the *Uri*.
 
 The *Folder* it's mandatory.
 
 ```csharp
 var command = new DownloadBlobReference()
 {
-    Container = "greetings",
-    Folder = "04bc4c89e547478",
-    Name = "greeting",
-    Extension = "md",
+    Uri = "https://stgazstgwrapper001westeu.blob.core.windows.net/tests/5a19306fc5014a4/greeting.md"
     ExpiresIn = 60,
 };
 
@@ -175,10 +168,8 @@ The response when *downloading* file reference resembles the response when *uplo
 ```json
 {
     "Container": "greetings",
-    "Folder": "5a19306fc5014a4",
     "Name": "greeting",
     "Extension": "md",
-    "FullName": "5a19306fc5014a4/greeting.md",
     "Uri": "https://stgazstgwrapper001westeu.blob.core.windows.net/tests/5a19306fc5014a4/greeting.md",
     "SasUri": "https://stgazstgwrapper001westeu.blob.core.windows.net/tests/5a19306fc5014a4/greeting.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
     "SasExpires": "2023-09-03T16:17:02.8220993Z",
@@ -188,25 +179,6 @@ The response when *downloading* file reference resembles the response when *uplo
         "ASW_TIMESTAMP": "03/09/2023 16:11:02"
     }
 }
-```
-
-With **AzureStorageWrapper**, you can download files that haven't been uploaded using this tool. You just need to make some adjustments when downloading. Simply modify the *Folder* parameter and set the file path as it exists in your container.
-
-In example, if you have saved invoices inside a container named *invoices* and you have virtual folders like *2020/08* you can donwload as:
-
-```csharp
-
-var command = new DownloadBlobReference()
-{
-    Container = "invoices",
-    Folder = "2020/08",
-    Name = "file",
-    Extension = "pdf",
-    ExpiresIn = 60,
-};
-
-var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
-
 ```
 
 # Support
