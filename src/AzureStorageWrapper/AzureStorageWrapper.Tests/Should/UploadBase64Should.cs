@@ -1,4 +1,6 @@
 ﻿using AzureStorageWrapper.Commands;
+using System.Buffers.Text;
+using AzureStorageWrapper.Tests.Sources;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
@@ -11,6 +13,48 @@ namespace AzureStorageWrapper.Tests.Should
         {
             _azureStorageWrapper = azureStorageWrapper;
         }
+
+        [Fact]
+        public async Task UploadBase64ImageWithoutHeader_ShouldUploadFile()
+        {
+            var command = new UploadBase64()
+            {
+                Base64 = Images.ImageWithoutEmbeddedTag,
+                Container = "images",
+                Name = "icon",
+                Extension = "png",
+            };
+
+            var response = await _azureStorageWrapper.UploadBlobAsync(command);
+
+            Assert.NotNull(response);
+
+            Assert.True(await PingAsync(response.SasUri));
+        }
+
+        /// <summary>
+        /// data:image/png;base64,iVBO....
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public async Task UploadBase64ImageWithHeader_ShouldUploadFile()
+        {
+            var command = new UploadBase64()
+            {
+                Base64 = Images.ImageWithEmbeddedTag, 
+                Container = "images",
+                Name = "icon",
+                Extension = "png",
+            };
+
+            var response = await _azureStorageWrapper.UploadBlobAsync(command);
+
+            Assert.NotNull(response);
+
+            Assert.True(await PingAsync(response.SasUri));
+        }
+
+
 
         [Fact]
         public async Task UploadEmptyBase64_ShouldThrowException()

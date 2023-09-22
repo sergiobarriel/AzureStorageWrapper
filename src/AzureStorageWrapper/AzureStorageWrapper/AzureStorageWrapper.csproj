@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.1</TargetFramework>
 		<Nullable>enable</Nullable>
-		<version>2.2.0</version>
+		<version>2.2.1</version>
 		<Title>AzureStorageWrapper</Title>
 		<Authors>Sergio Barriel</Authors>
 		<Description>Wrapper for Azure Storage, aimed at simplifying the file upload process and obtaining links for downloading them.</Description>
@@ -16,6 +16,8 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<IncludeSymbols>False</IncludeSymbols>
+		<PackageReleaseNotes>- regular expressions to remove base64 headers
+- tests</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<ItemGroup>
