@@ -6,6 +6,7 @@
 
 [![run tests](https://github.com/sergiobarriel/AzureStorageWrapper/actions/workflows/run-tests.yml/badge.svg?branch=dev)](https://github.com/sergiobarriel/AzureStorageWrapper/actions/workflows/run-tests.yml) 
 [![run tests and deploy](https://github.com/sergiobarriel/AzureStorageWrapper/actions/workflows/run-tests-and-deploy.yml/badge.svg?branch=main)](https://github.com/sergiobarriel/AzureStorageWrapper/actions/workflows/run-tests-and-deploy.yml)
+![downloads](https://img.shields.io/nuget/dt/AzureStorageWrapper)
 
 📦 View package on [NuGet Gallery](https://www.nuget.org/packages/AzureStorageWrapper/)
 📦 View package on [nuget.info](https://nuget.info/packages/AzureStorageWrapper)
