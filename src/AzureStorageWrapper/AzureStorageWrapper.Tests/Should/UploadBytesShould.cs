@@ -20,8 +20,8 @@ namespace AzureStorageWrapper.Tests.Should
             var command = new UploadBytes()
             {
                 Bytes = bytes,
-                Container = "greetings",
-                Name = "greeting",
+                Container = "files",
+                Name = "hello",
                 Extension = "md",
                 Metadata = new Dictionary<string, string>()
                     {{"hello", "world"}}

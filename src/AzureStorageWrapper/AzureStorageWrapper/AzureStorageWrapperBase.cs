@@ -15,7 +15,7 @@ namespace AzureStorageWrapper
             _configuration = configuration;
         }
 
-        internal void Validate(UploadBlob command)
+        internal void ValidateCommand(UploadBlob command)
         {
             if (string.IsNullOrEmpty(command.Container))
                 throw new AzureStorageWrapperException($"{nameof(command.Container)} is empty!");
@@ -27,7 +27,7 @@ namespace AzureStorageWrapper
                 throw new AzureStorageWrapperException($"{nameof(command.Extension)} is empty!");
         }
 
-        internal void Validate(DownloadBlobReference command)
+        internal void ValidateCommand(DownloadBlobReference command)
         {
             if (string.IsNullOrEmpty(command.Uri))
                 throw new AzureStorageWrapperException($"{nameof(command.Uri)} is empty!");
@@ -36,13 +36,13 @@ namespace AzureStorageWrapper
                 throw new AzureStorageWrapperException($"{nameof(command.ExpiresIn)} should be lower than {_configuration.MaxSasUriExpiration}");
         }
 
-        internal void Validate(DeleteBlob command)
+        internal void ValidateCommand(DeleteBlob command)
         {
             if (string.IsNullOrEmpty(command.Uri))
                 throw new AzureStorageWrapperException($"{nameof(command.Uri)} is empty!");
         }
 
-        internal void Validate(GetSasUri command)
+        internal void ValidateCommand(GetSasUri command)
         {
             if (string.IsNullOrEmpty(command.Uri))
                 throw new AzureStorageWrapperException($"{nameof(command.Uri)} is empty!");

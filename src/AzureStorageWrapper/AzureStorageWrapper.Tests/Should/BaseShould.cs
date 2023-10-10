@@ -36,11 +36,11 @@
         public static IEnumerable<object[]> WrongFileProperties() => new List<object[]>()
         {
             new object[] { "", "", "" },
-            new object[] { "greetings", "", "" },
-            new object[] { "greetings", "hello", "" },
+            new object[] { "files", "", "" },
+            new object[] { "files", "hello", "" },
             new object[] { "", "hello", "md" },
             new object[] { "", "", "md" },
-            new object[] { "greetings", "", "md" },
+            new object[] { "files", "", "md" },
         };
     }
 }
