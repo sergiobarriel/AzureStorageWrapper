@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
@@ -31,7 +34,9 @@ namespace AzureStorageWrapper
 
             var folder = Guid.NewGuid().ToString("N")[..15];
 
-            var path = $"{folder}/{command.Name}.{command.Extension}";
+            var sanitizedFileName = SanitizeFileName(command.Name);
+
+            var path = $"{folder}/{sanitizedFileName}.{command.Extension}";
 
             var blobClient = container.GetBlobClient(path);
 
@@ -39,8 +44,8 @@ namespace AzureStorageWrapper
 
             command.Metadata ??= new Dictionary<string, string>();
 
-            command.Metadata.TryAdd("ASW_FOLDER", folder);
-            command.Metadata.TryAdd("ASW_TIMESTAMP", $"{DateTime.UtcNow}");
+            command.Metadata.TryAdd("asw_folder", folder);
+            command.Metadata.TryAdd("asw_timestamp", $"{DateTime.UtcNow}");
 
             await blobClient.SetMetadataAsync(SanitizeDictionary(command.Metadata));
 
@@ -53,7 +58,7 @@ namespace AzureStorageWrapper
             var referenceEntity = new BlobReference()
             {
                 Container = command.Container,
-                Name = command.Name,
+                Name = sanitizedFileName,
                 Extension = command.Extension,
                 Uri = blobClient.Uri.AbsoluteUri,
                 SasUri = sasUri,
@@ -157,6 +162,41 @@ namespace AzureStorageWrapper
             var uriObject = new Uri(uri);
 
             return string.Join(string.Empty, uriObject.Segments[2..]);
+        }
+
+        private static string SanitizeFileName(string fileName)
+        {
+            var withoutBlanks = RemoveBlanks(fileName);
+
+            var withoutDiacritics = RemoveDiacritics(withoutBlanks);
+
+            return withoutDiacritics;
+        }
+
+        private static string RemoveBlanks(string fileName)
+        {
+            return Regex.Replace(fileName, @"[^\w\d\-]", "_");
+        }
+
+        private static string RemoveDiacritics(string text)
+        {
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+
+            var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
+
+            foreach (var @char in normalizedString)
+            {
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(@char);
+
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(@char);
+                }
+            }
+
+            return stringBuilder
+                .ToString()
+                .Normalize(NormalizationForm.FormC);
         }
     }
 }

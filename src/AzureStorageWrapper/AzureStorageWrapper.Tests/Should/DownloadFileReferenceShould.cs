@@ -1,4 +1,5 @@
 ﻿using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Tests.Sources;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
@@ -17,7 +18,7 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Uri = ExistingBlobUri,
+                Uri = Uris.ExistingBlobUri,
                 ExpiresIn = 360,
             };
 
@@ -50,7 +51,7 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Uri = UnExistingBlobUri,
+                Uri = Uris.UnExistingBlobUri,
                 ExpiresIn = 360,
             };
 
@@ -68,7 +69,7 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Uri = ExistingBlobUri,
+                Uri = Uris.ExistingBlobUri,
                 ExpiresIn = expiresIn,
             };
 
@@ -84,7 +85,7 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Uri = ExistingBlobUri,
+                Uri = Uris.ExistingBlobUri,
                 ExpiresIn = int.MaxValue,
             };
 
