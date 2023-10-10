@@ -1,15 +1,14 @@
 ﻿using AzureStorageWrapper.Commands;
 using System.Buffers.Text;
-using AzureStorageWrapper.Tests.Sources;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
 {
-    public class UploadWithNameVariations : BaseShould
+    public class UploadFileWithNameVariations : BaseShould
     {
         private readonly IAzureStorageWrapper _azureStorageWrapper;
 
-        public UploadWithNameVariations(IAzureStorageWrapper azureStorageWrapper)
+        public UploadFileWithNameVariations(IAzureStorageWrapper azureStorageWrapper)
         {
             _azureStorageWrapper = azureStorageWrapper;
         }
