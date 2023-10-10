@@ -24,7 +24,7 @@ namespace AzureStorageWrapper.Tests.Should
                 Name = "greeting",
                 Extension = "md",
                 Metadata = new Dictionary<string, string>()
-                    {{"GREETING_PLACE", "Office"}}
+                    {{"hello", "world"}}
             };
 
             await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
@@ -46,7 +46,7 @@ namespace AzureStorageWrapper.Tests.Should
                 Name = fileName,
                 Extension = fileExtension,
                 Metadata = new Dictionary<string, string>()
-                    {{"GREETING_PLACE", "Office"}}
+                    {{"hello", "world"}}
             };
 
             await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
@@ -64,8 +64,8 @@ namespace AzureStorageWrapper.Tests.Should
             var command = new UploadBytes()
             {
                 Bytes = bytes,
-                Container = "greetings",
-                Name = "greeting",
+                Container = "files",
+                Name = "hello",
                 Extension = "md",
                 Metadata = properties
             };
@@ -85,11 +85,11 @@ namespace AzureStorageWrapper.Tests.Should
             var response = await _azureStorageWrapper.UploadBlobAsync(new UploadBytes()
             {
                 Bytes = bytes,
-                Container = "greetings",
-                Name = "greeting",
+                Container = "files",
+                Name = "hello",
                 Extension = "md",
                 Metadata = new Dictionary<string, string>()
-                    {{"GREETING_PLACE", "Office"}}
+                    {{"hello", "world"}}
             });
 
             Assert.NotNull(response);

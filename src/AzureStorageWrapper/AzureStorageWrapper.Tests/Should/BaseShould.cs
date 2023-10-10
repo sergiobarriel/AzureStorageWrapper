@@ -2,9 +2,7 @@
 {
     public class BaseShould
     {
-        internal const string ExistingBlobUri = "https://stgazstgwrapper001westeu.blob.core.windows.net/more-greetings/greeting.md";
-        internal const string UnExistingBlobUri = "https://stgazstgwrapper001westeu.blob.core.windows.net/more-greetings/unexisting.md";
-
+    
         protected static async Task<bool> PingAsync(string uri)
         {
             using var httpClient = new HttpClient();

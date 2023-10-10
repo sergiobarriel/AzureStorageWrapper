@@ -20,11 +20,11 @@ namespace AzureStorageWrapper.Tests.Should
             var uploadCommand = new UploadBase64()
             {
                 Base64 = base64,
-                Container = "greetings",
-                Name = "greeting",
+                Container = "files",
+                Name = "hello",
                 Extension = "md",
                 Metadata = new Dictionary<string, string>()
-                    {{"GREETING_PLACE", "Office"}}
+                    {{"hello", "world"}}
             };
 
             var response = await _azureStorageWrapper.UploadBlobAsync(uploadCommand);
