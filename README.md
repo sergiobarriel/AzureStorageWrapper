@@ -68,10 +68,10 @@ var base64 = "SGVsbG8g8J+Zgg==";
 var command = new UploadBase64()
 {
     Base64 = base64,
-    Container = "greetings",
-    Name = "greeting",
+    Container = "files",
+    Name = "hello",
     Extension = "md",
-    Metadata = new Dictionary<string, string>() { {"GREETING_PLACE", "Office"} }
+    Metadata = new Dictionary<string, string>() { {"key", "value"} }
 };
 
 var response = await _azureStorageWrapper.UploadBlobAsync(command);
@@ -85,10 +85,10 @@ var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");
 var command = new UploadBytes()
 {
     Bytes = bytes,
-    Container = "greetings",
-    Name = "greeting",
+    Container = "files",
+    Name = "hello",
     Extension = "md",
-    Metadata = new Dictionary<string, string>() { {"GREETING_PLACE", "Street"} }
+    Metadata = new Dictionary<string, string>() { {"key", "value"} }
 };
 
 var response = await _azureStorageWrapper.UploadBlobAsync(command);
@@ -102,10 +102,10 @@ var stream = new MemoryStream(Convert.FromBase64String("SGVsbG8g8J+Zgg=="));
 var command = new UploadStream()
 {
     Stream = stream,
-    Container = "greetings",
-    Name = "greeting",
+    Container = "files",
+    Name = "hello",
     Extension = "md",
-    Metadata = new Dictionary<string, string>() { {"GREETING_PLACE", "Park"} }
+    Metadata = new Dictionary<string, string>() { {"key", "value"} }
 };
 
 var response = await _azureStorageWrapper.UploadBlobAsync(command);
@@ -128,20 +128,20 @@ public class BlobReference
 }
 ```
 
-In example, if you upload the file `greeting.md` file to container `greetings` you will receive a response like:
+In example, if you upload the file `hello.md` file to container `files` you will receive a response like:
 
 ```json
 {
-    "Container": "greetings",
-    "Name": "greeting",
+    "Container": "files",
+    "Name": "hello",
     "Extension": "md",
-    "Uri": "https://stgazstgwrapper001westeu.blob.core.windows.net/tests/5a19306fc5014a4/greeting.md",
-    "SasUri": "https://stgazstgwrapper001westeu.blob.core.windows.net/tests/5a19306fc5014a4/greeting.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
+    "Uri": "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md",
+    "SasUri": "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
     "SasExpires": "2023-09-03T16:17:02.8220993Z",
     "Metadata": {
-        "GREETING_PLACE": "Office",
-        "ASW_FOLDER": "5a19306fc5014a4",
-        "ASW_TIMESTAMP": "03/09/2023 16:11:02"
+        "key": "value",
+        "asw_folder": "5a19306fc5014a4",
+        "asw_timestamp": "03/09/2023 16:11:02"
     }
 }
 ```
@@ -157,7 +157,7 @@ The *Folder* it's mandatory.
 ```csharp
 var command = new DownloadBlobReference()
 {
-    Uri = "https://stgazstgwrapper001westeu.blob.core.windows.net/tests/5a19306fc5014a4/greeting.md"
+    Uri = "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md"
     ExpiresIn = 60,
 };
 
@@ -168,16 +168,16 @@ The response when *downloading* file reference resembles the response when *uplo
 
 ```json
 {
-    "Container": "greetings",
-    "Name": "greeting",
+    "Container": "files",
+    "Name": "hello",
     "Extension": "md",
-    "Uri": "https://stgazstgwrapper001westeu.blob.core.windows.net/tests/5a19306fc5014a4/greeting.md",
-    "SasUri": "https://stgazstgwrapper001westeu.blob.core.windows.net/tests/5a19306fc5014a4/greeting.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
+    "Uri": "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md",
+    "SasUri": "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
     "SasExpires": "2023-09-03T16:17:02.8220993Z",
     "Metadata": {
-        "GREETING_PLACE": "Office",
-        "ASW_FOLDER": "5a19306fc5014a4",
-        "ASW_TIMESTAMP": "03/09/2023 16:11:02"
+        "key": "value",
+        "asw_folder": "5a19306fc5014a4",
+        "asw_timestamp": "03/09/2023 16:11:02"
     }
 }
 ```
@@ -185,7 +185,7 @@ The response when *downloading* file reference resembles the response when *uplo
 
 If you like the project, you can consider making a donation at [ko-fi.com](https://ko-fi.com/sergiobarriel)
 
-<a href='https://ko-fi.com/W7W6O05JU' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi1.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+[![kofi button](https://storage.ko-fi.com/cdn/kofi1.png?v=3)](https://ko-fi.com/W7W6O05JU)
 
 # Support
 
