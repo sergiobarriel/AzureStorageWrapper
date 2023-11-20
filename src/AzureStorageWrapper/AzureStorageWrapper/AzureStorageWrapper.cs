@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -70,8 +71,8 @@ namespace AzureStorageWrapper
         {
             ValidateCommand(command);
 
-            var containerName = GetContainerFromUri(command.Uri);
-            var fileName = GetFileNameFromUri(command.Uri);
+            var containerName = GetContainer(command.Uri);
+            var fileName = GetFileName(command.Uri);
 
             var container = new BlobContainerClient(_configuration.ConnectionString, containerName);
             
@@ -107,8 +108,8 @@ namespace AzureStorageWrapper
         {
             ValidateCommand(command);
 
-            var containerName = GetContainerFromUri(command.Uri);
-            var fileName = GetFileNameFromUri(command.Uri);
+            var containerName = GetContainer(command.Uri);
+            var fileName = GetFileName(command.Uri);
  
             var container = new BlobContainerClient(_configuration.ConnectionString, containerName);
 
@@ -127,8 +128,8 @@ namespace AzureStorageWrapper
         {
             ValidateCommand(command);
 
-            var containerName = GetContainerFromUri(command.Uri);
-            var fileName = GetFileNameFromUri(command.Uri);
+            var containerName = GetContainer(command.Uri);
+            var fileName = GetFileName(command.Uri);
 
             var container = new BlobContainerClient(_configuration.ConnectionString, containerName);
 
@@ -141,25 +142,43 @@ namespace AzureStorageWrapper
             return blobSasUri.AbsoluteUri;
         }
 
-        private static (string name, string extension) GetFileNameFromUri(string uri)
+        private static (string name, string extension) GetFileName(string uri)
+        {
+            var unescapedUriRepresentation = Uri.UnescapeDataString(uri);
+
+            var container = GetContainer(unescapedUriRepresentation);
+            var host = GetHost(unescapedUriRepresentation);
+            var extension = GetExtension(unescapedUriRepresentation);
+
+            var temp = unescapedUriRepresentation
+                .Replace($"{host}/", string.Empty)
+                .Replace($"{container}/", string.Empty)
+                .Replace($".{extension}", string.Empty);
+            
+            return (name: temp, extension: extension);
+        }
+
+        private static string GetHost(string uri)
         {
             var uriObject = new Uri(uri);
 
-            var escapedFileName = string.Join(string.Empty, uriObject.Segments[2..]);
-
-            var unescapedFileName = Uri.UnescapeDataString(escapedFileName);
-
-            var parts = unescapedFileName.Split(".");
-
-            return (name: parts[0], extension: parts[1]);
+            return $"{uriObject.Scheme}://{uriObject.Authority}";
         }
 
-        private static string GetContainerFromUri(string uri)
+        private static string GetContainer(string uri)
         {
             var uriObject = new Uri(uri);
 
             return uriObject.Segments[1].TrimEnd('/');
         }
+
+        private static string GetExtension(string uri)
+        {
+            var uriObject = new Uri(uri);
+
+            return Path.GetExtension(uriObject.LocalPath).TrimStart('.');
+        }
+
 
         private static string Sanitize(string fileName)
         {
