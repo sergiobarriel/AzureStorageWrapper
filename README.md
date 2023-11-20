@@ -185,8 +185,6 @@ The response when *downloading* file reference resembles the response when *uplo
 
 If you like the project, you can consider making a donation at [ko-fi.com](https://ko-fi.com/sergiobarriel)
 
-[![kofi button](https://storage.ko-fi.com/cdn/kofi1.png?v=3)](https://ko-fi.com/W7W6O05JU)
-
 # Support
 
 You can contact me via Twitter [@sergiobarriel](https://twitter.com/sergiobarriel), or if you have an [issue](https://github.com/sergiobarriel/AzureStorageWrapper/issues), you can open one 🙂
