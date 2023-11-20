@@ -14,6 +14,38 @@ namespace AzureStorageWrapper.Tests.Should
         }
 
         [Fact]
+        public async Task DownloadBlobReferenceWithManyDots_ShouldReturnReference()
+        {
+            var command = new DownloadBlobReference()
+            {
+                Uri = Uris.ExistingFilewithManyDots,
+                ExpiresIn = 360,
+            };
+
+            var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
+
+            Assert.NotNull(response);
+
+            Assert.True(await PingAsync(response.SasUri));
+        }
+
+        [Fact]
+        public async Task DownloadBlobReferenceWithExtensions_ShouldReturnReference()
+        {
+            var command = new DownloadBlobReference()
+            {
+                Uri = Uris.ExistingFilewithManyExtensions,
+                ExpiresIn = 360,
+            };
+
+            var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
+
+            Assert.NotNull(response);
+
+            Assert.True(await PingAsync(response.SasUri));
+        }
+
+        [Fact]
         public async Task DownloadBlobReference_ShouldReturnReference()
         {
             var command = new DownloadBlobReference()

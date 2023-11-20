@@ -32,6 +32,7 @@ namespace AzureStorageWrapper.Tests.Should
             Assert.True(await PingAsync(response.SasUri));
         }
 
+
         /// <summary>
         /// data:image/png;base64,iVBO....
         /// </summary>
@@ -132,6 +133,28 @@ namespace AzureStorageWrapper.Tests.Should
                 Base64 = base64,
                 Container = "files",
                 Name = "hello",
+                Extension = "md",
+                Metadata = new Dictionary<string, string>()
+                    {{"hello", "world"}}
+            };
+
+            var response = await _azureStorageWrapper.UploadBlobAsync(command);
+
+            Assert.NotNull(response);
+
+            Assert.True(await PingAsync(response.SasUri));
+        }
+
+        [Fact]
+        public async Task UploadBase64WithMultipleDotsInName_ShouldUploadFile()
+        {
+            var base64 = "SGVsbG8g8J+Zgg==";
+
+            var command = new UploadBase64()
+            {
+                Base64 = base64,
+                Container = "files",
+                Name = "hello.hello.hello.hello",
                 Extension = "md",
                 Metadata = new Dictionary<string, string>()
                     {{"hello", "world"}}
