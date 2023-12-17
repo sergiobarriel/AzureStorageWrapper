@@ -22,13 +22,13 @@ namespace AzureStorageWrapper
 
         public async Task<BlobReference> UploadBlobAsync(UploadBlob command)
         {
-            ValidateCommand(command);
+            Validate(command);
 
             await CreateContainerIfNotExists(command.Container);
             
-            var container = await GetContainer(command.Container);
+            var container = GetContainer(command.Container);
             
-            var fileName = Sanitize(command.Name);
+            var fileName = SanitizeFileName(command.Name);
 
             var blobClient = command.UseVirtualFolder
                 ? container.GetBlobClient($"{RandomString()}/{fileName}.{command.Extension}")
@@ -63,7 +63,7 @@ namespace AzureStorageWrapper
         
         public async Task<BlobReference> DownloadBlobReferenceAsync(DownloadBlobReference command)
         {
-            ValidateCommand(command);
+            Validate(command);
 
             var containerName = _uriService.GetContainer(command.Uri);
             var fileName = GetFileName(command.Uri);
@@ -100,12 +100,12 @@ namespace AzureStorageWrapper
 
         public async Task DeleteBlobAsync(DeleteBlob command)
         {
-            ValidateCommand(command);
+            Validate(command);
 
             var containerName = _uriService.GetContainer(command.Uri);
             var fileName = GetFileName(command.Uri);
 
-            var container = await GetContainer(containerName);
+            var container = GetContainer(containerName);
 
             if (!await container.ExistsAsync())
                 throw new AzureStorageWrapperException($"container {containerName} doesn't exists!");
@@ -118,26 +118,27 @@ namespace AzureStorageWrapper
             await blobClient.DeleteIfExistsAsync();
         }
 
-        private async Task<BlobContainerClient> GetContainer(string containerName)
+        private BlobContainerClient GetContainer(string containerName)
         {
             return new BlobContainerClient(_configuration.ConnectionString, containerName);
         }
 
         private async Task CreateContainerIfNotExists(string containerName)
         {
-            var container = new BlobContainerClient(_configuration.ConnectionString, containerName);
+            var container = GetContainer(containerName);
             
             if (!await container.ExistsAsync())
             {
                 if (_configuration.CreateContainerIfNotExists)
                     await container.CreateIfNotExistsAsync();
+                
                 else throw new AzureStorageWrapperException($"container {containerName} doesn't exists!");
             }
         }
 
         private async Task<string> GetSasUriAsync(GetSasUri command)
         {
-            ValidateCommand(command);
+            Validate(command);
 
             var containerName = _uriService.GetContainer(command.Uri);
             var fileName = GetFileName(command.Uri);
@@ -169,7 +170,7 @@ namespace AzureStorageWrapper
             return (name: temp, extension: extension);
         }
         
-        private static string Sanitize(string fileName)
+        private static string SanitizeFileName(string fileName)
         {
             var withoutBlanks = RemoveBlanks(fileName);
 
