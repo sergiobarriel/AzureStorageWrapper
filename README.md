@@ -148,6 +148,29 @@ In example, if you upload the file `hello.md` file to container `files` you will
 
 It is your responsibility to save the reference (URI property) of the file you have uploaded to Azure Storage somewhere, as you will need it for later downloads.
 
+## Virtual Folders
+
+The upload commands have a property called `UseVirtualFolder` which by default has a value of `true` but you can set it to `false` if you wish.
+
+Be careful. If you make that change, the files will NOT be saved in virtual directories, and file names may collide, causing files to be overwritten.
+
+In this case, you must be responsible for establishing your own mechanism to generate unique file names.
+
+```csharp
+var base64 = "SGVsbG8g8J+Zgg==";
+
+var command = new UploadBase64()
+{
+    Base64 = base64,
+    Container = "files",
+    Name = "hello",
+    Extension = "md",
+    UseVirtualFolder = false // be careful!
+};
+
+var response = await _azureStorageWrapper.UploadBlobAsync(command);
+```
+
 ## Download blobs
 
 To download a blob reference, you need specify the *Uri*.
