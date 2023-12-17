@@ -151,7 +151,7 @@ It is your responsibility to save the reference (URI property) of the file you h
 
 The upload commands have a property called `UseVirtualFolder` which by default has a value of `true` but you can set it to `false` if you wish.
 
-Be careful. If you make that change, the files will NOT be saved in virtual directories, and file names may collide, causing files to be overwritten.
+**Be careful.** If you make that change, the files will NOT be saved in virtual directories, and file names may collide, causing files to be overwritten.
 
 In this case, you must be responsible for establishing your own mechanism to generate unique file names.
 
