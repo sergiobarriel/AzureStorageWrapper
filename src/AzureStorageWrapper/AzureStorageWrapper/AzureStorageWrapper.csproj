@@ -16,7 +16,8 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<IncludeSymbols>False</IncludeSymbols>
-		<PackageReleaseNotes></PackageReleaseNotes>
+		<PackageReleaseNotes>- add virtual folder support
+- add tests</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<ItemGroup>

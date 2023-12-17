@@ -18,7 +18,7 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Uri = Uris.ExistingFilewithManyDots,
+                Uri = Uris.ExistingFileWithManyDots,
                 ExpiresIn = 360,
             };
 
@@ -34,7 +34,7 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Uri = Uris.ExistingFilewithManyExtensions,
+                Uri = Uris.ExistingFileWithManyExtensions,
                 ExpiresIn = 360,
             };
 
@@ -83,7 +83,7 @@ namespace AzureStorageWrapper.Tests.Should
         {
             var command = new DownloadBlobReference()
             {
-                Uri = Uris.UnexistingFile,
+                Uri = Uris.UnExistingFile,
                 ExpiresIn = 360,
             };
 

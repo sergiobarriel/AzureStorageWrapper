@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -15,35 +13,31 @@ namespace AzureStorageWrapper
 {
     public class AzureStorageWrapper : AzureStorageWrapperBase, IAzureStorageWrapper
     {
-        public AzureStorageWrapper(AzureStorageWrapperConfiguration configuration) : base(configuration)
-        {
+        private readonly IUriService _uriService;
 
+        public AzureStorageWrapper(AzureStorageWrapperConfiguration configuration, IUriService uriService) : base(configuration)
+        {
+            _uriService = uriService;
         }
 
         public async Task<BlobReference> UploadBlobAsync(UploadBlob command)
         {
             ValidateCommand(command);
 
-            var container = new BlobContainerClient(_configuration.ConnectionString, command.Container);
+            await CreateContainerIfNotExists(command.Container);
             
-            if (!await container.ExistsAsync())
-            {
-                if (_configuration.CreateContainerIfNotExists)
-                    await container.CreateIfNotExistsAsync();
-                else throw new AzureStorageWrapperException($"container {command.Container} doesn't exists!");
-            }
+            var container = await GetContainer(command.Container);
+            
+            var fileName = Sanitize(command.Name);
 
-            var folder = Guid.NewGuid().ToString("N")[..15];
-
-            var sanitizedFileName = Sanitize(command.Name);
-
-            var blobClient = container.GetBlobClient($"{folder}/{sanitizedFileName}.{command.Extension}");
+            var blobClient = command.UseVirtualFolder
+                ? container.GetBlobClient($"{RandomString()}/{fileName}.{command.Extension}")
+                : container.GetBlobClient($"{fileName}.{command.Extension}");
 
             await blobClient.UploadAsync(command.GetContent(), overwrite: true);
 
             command.Metadata ??= new Dictionary<string, string>();
-            command.Metadata.TryAdd("asw_folder", folder);
-            command.Metadata.TryAdd("asw_timestamp", $"{DateTime.UtcNow}");
+            command.Metadata.TryAdd("_timestamp", $"{DateTime.UtcNow}");
 
             await blobClient.SetMetadataAsync(SanitizeDictionary(command.Metadata));
 
@@ -56,7 +50,7 @@ namespace AzureStorageWrapper
             var blobReference = new BlobReference()
             {
                 Container = command.Container,
-                Name = sanitizedFileName,
+                Name = fileName,
                 Extension = command.Extension,
                 Uri = blobClient.Uri.AbsoluteUri,
                 SasUri = sasUri,
@@ -66,12 +60,12 @@ namespace AzureStorageWrapper
 
             return blobReference;
         }
-
+        
         public async Task<BlobReference> DownloadBlobReferenceAsync(DownloadBlobReference command)
         {
             ValidateCommand(command);
 
-            var containerName = GetContainer(command.Uri);
+            var containerName = _uriService.GetContainer(command.Uri);
             var fileName = GetFileName(command.Uri);
 
             var container = new BlobContainerClient(_configuration.ConnectionString, containerName);
@@ -108,10 +102,10 @@ namespace AzureStorageWrapper
         {
             ValidateCommand(command);
 
-            var containerName = GetContainer(command.Uri);
+            var containerName = _uriService.GetContainer(command.Uri);
             var fileName = GetFileName(command.Uri);
- 
-            var container = new BlobContainerClient(_configuration.ConnectionString, containerName);
+
+            var container = await GetContainer(containerName);
 
             if (!await container.ExistsAsync())
                 throw new AzureStorageWrapperException($"container {containerName} doesn't exists!");
@@ -124,11 +118,28 @@ namespace AzureStorageWrapper
             await blobClient.DeleteIfExistsAsync();
         }
 
+        private async Task<BlobContainerClient> GetContainer(string containerName)
+        {
+            return new BlobContainerClient(_configuration.ConnectionString, containerName);
+        }
+
+        private async Task CreateContainerIfNotExists(string containerName)
+        {
+            var container = new BlobContainerClient(_configuration.ConnectionString, containerName);
+            
+            if (!await container.ExistsAsync())
+            {
+                if (_configuration.CreateContainerIfNotExists)
+                    await container.CreateIfNotExistsAsync();
+                else throw new AzureStorageWrapperException($"container {containerName} doesn't exists!");
+            }
+        }
+
         private async Task<string> GetSasUriAsync(GetSasUri command)
         {
             ValidateCommand(command);
 
-            var containerName = GetContainer(command.Uri);
+            var containerName = _uriService.GetContainer(command.Uri);
             var fileName = GetFileName(command.Uri);
 
             var container = new BlobContainerClient(_configuration.ConnectionString, containerName);
@@ -141,14 +152,14 @@ namespace AzureStorageWrapper
 
             return blobSasUri.AbsoluteUri;
         }
-
-        private static (string name, string extension) GetFileName(string uri)
+        
+        private (string name, string extension) GetFileName(string uri)
         {
             var unescapedUriRepresentation = Uri.UnescapeDataString(uri);
 
-            var container = GetContainer(unescapedUriRepresentation);
-            var host = GetHost(unescapedUriRepresentation);
-            var extension = GetExtension(unescapedUriRepresentation);
+            var container = _uriService.GetContainer(unescapedUriRepresentation);
+            var host = _uriService.GetHost(unescapedUriRepresentation);
+            var extension = _uriService.GetFileExtension(unescapedUriRepresentation);
 
             var temp = unescapedUriRepresentation
                 .Replace($"{host}/", string.Empty)
@@ -157,29 +168,7 @@ namespace AzureStorageWrapper
             
             return (name: temp, extension: extension);
         }
-
-        private static string GetHost(string uri)
-        {
-            var uriObject = new Uri(uri);
-
-            return $"{uriObject.Scheme}://{uriObject.Authority}";
-        }
-
-        private static string GetContainer(string uri)
-        {
-            var uriObject = new Uri(uri);
-
-            return uriObject.Segments[1].TrimEnd('/');
-        }
-
-        private static string GetExtension(string uri)
-        {
-            var uriObject = new Uri(uri);
-
-            return Path.GetExtension(uriObject.LocalPath).TrimStart('.');
-        }
-
-
+        
         private static string Sanitize(string fileName)
         {
             var withoutBlanks = RemoveBlanks(fileName);
@@ -214,7 +203,5 @@ namespace AzureStorageWrapper
                     .Normalize(NormalizationForm.FormC);
             }
         }
-
-        
     }
 }
