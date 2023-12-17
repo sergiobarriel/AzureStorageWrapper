@@ -135,8 +135,8 @@ In example, if you upload the file `hello.md` file to container `files` you will
     "Container": "files",
     "Name": "hello",
     "Extension": "md",
-    "Uri": "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md",
-    "SasUri": "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
+    "Uri": "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md",
+    "SasUri": "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
     "SasExpires": "2023-09-03T16:17:02.8220993Z",
     "Metadata": {
         "key": "value",
@@ -177,7 +177,7 @@ To download a blob reference, you need specify the *Uri*.
 ```csharp
 var command = new DownloadBlobReference()
 {
-    Uri = "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md"
+    Uri = "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md"
     ExpiresIn = 60,
 };
 
@@ -191,8 +191,8 @@ The response when *downloading* file reference resembles the response when *uplo
     "Container": "files",
     "Name": "hello",
     "Extension": "md",
-    "Uri": "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md",
-    "SasUri": "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
+    "Uri": "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md",
+    "SasUri": "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
     "SasExpires": "2023-09-03T16:17:02.8220993Z",
     "Metadata": {
         "_timestamp": "03/09/2023 16:11:02"
