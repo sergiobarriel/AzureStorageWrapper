@@ -7,8 +7,6 @@ namespace AzureStorageWrapper
     {
         public static void AddAzureStorageWrapper(this IServiceCollection serviceCollection, AzureStorageWrapperConfiguration configuration)
         {
-            //configuration.Validate();
-            
             serviceCollection.AddSingleton<IUriService, UriService>();
 
             serviceCollection.AddSingleton(configuration);
@@ -22,8 +20,6 @@ namespace AzureStorageWrapper
 
             configurationAction(configuration);
             
-            //configuration.Validate();
-
             serviceCollection.AddSingleton<IUriService, UriService>();
 
             serviceCollection.AddSingleton(configuration);

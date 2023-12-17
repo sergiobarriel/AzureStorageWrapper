@@ -17,6 +17,9 @@ namespace AzureStorageWrapper.Commands
         
         public Dictionary<string, string> Metadata { get; set; }
 
+        /// <summary>
+        /// If you set this property to 'false' the files will NOT be saved in virtual directories, and file names may collide, causing files to be overwritten
+        /// </summary>
         public bool UseVirtualFolder { get; set; }
 
         public abstract Stream GetContent();
