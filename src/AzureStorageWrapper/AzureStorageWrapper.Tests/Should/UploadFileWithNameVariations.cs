@@ -1,5 +1,4 @@
 ﻿using AzureStorageWrapper.Commands;
-using System.Buffers.Text;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
