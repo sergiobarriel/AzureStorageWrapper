@@ -140,8 +140,7 @@ In example, if you upload the file `hello.md` file to container `files` you will
     "SasExpires": "2023-09-03T16:17:02.8220993Z",
     "Metadata": {
         "key": "value",
-        "asw_folder": "5a19306fc5014a4",
-        "asw_timestamp": "03/09/2023 16:11:02"
+        "_timestamp": "03/09/2023 16:11:02"
     }
 }
 ```
@@ -175,8 +174,6 @@ var response = await _azureStorageWrapper.UploadBlobAsync(command);
 
 To download a blob reference, you need specify the *Uri*.
 
-The *Folder* it's mandatory.
-
 ```csharp
 var command = new DownloadBlobReference()
 {
@@ -198,9 +195,7 @@ The response when *downloading* file reference resembles the response when *uplo
     "SasUri": "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
     "SasExpires": "2023-09-03T16:17:02.8220993Z",
     "Metadata": {
-        "key": "value",
-        "asw_folder": "5a19306fc5014a4",
-        "asw_timestamp": "03/09/2023 16:11:02"
+        "_timestamp": "03/09/2023 16:11:02"
     }
 }
 ```
