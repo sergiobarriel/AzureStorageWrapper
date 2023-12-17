@@ -2,12 +2,16 @@
 {
     public static class Uris
     {
-        public static string ExistingFile = "https://stgazstgwrapper001westeu.blob.core.windows.net/static-files/hello.md";
-        public static string ExistingFilewithManyDots = "https://stgazstgwrapper001westeu.blob.core.windows.net/static-files/hello.hello.hello.hello.md";
-        public static string ExistingFilewithManyExtensions = "https://stgazstgwrapper001westeu.blob.core.windows.net/static-files/hello.md.md";
-        public static string UnexistingFile = "https://stgazstgwrapper001westeu.blob.core.windows.net/static-files/unexisting-hello.md";
+        public const string ExistingFile = "https://stgazstgwrapper001westeu.blob.core.windows.net/static/hello.md";
 
-        public static string ExistingFileWithBlanks = "https://stgazstgwrapper001westeu.blob.core.windows.net/static-files/hello world.md";
-        public static string ExistingFileWithUriEncoded = "https://stgazstgwrapper001westeu.blob.core.windows.net/static-files/hello%20world.md";
+        public const string ExistingFileWithManyDots = "https://stgazstgwrapper001westeu.blob.core.windows.net/static/hello.hello.hello.hello.md";
+
+        public const string ExistingFileWithManyExtensions = "https://stgazstgwrapper001westeu.blob.core.windows.net/static/hello.md.md";
+
+        public const string UnExistingFile = "https://stgazstgwrapper001westeu.blob.core.windows.net/static/unexisting-hello.md";
+
+        public const string ExistingFileWithBlanks = "https://stgazstgwrapper001westeu.blob.core.windows.net/static/hello hello.md";
+
+        public const string ExistingFileWithUriEncoded = "https://stgazstgwrapper001westeu.blob.core.windows.net/static/hello%20hello.md";
     }
 }

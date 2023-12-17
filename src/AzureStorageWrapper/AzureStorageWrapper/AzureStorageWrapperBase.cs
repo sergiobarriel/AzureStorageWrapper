@@ -54,7 +54,7 @@ namespace AzureStorageWrapper
         /// <summary>
         /// ~2 centuries of work are needed in order to have a 1% probability of at least one collision: https://alex7kom.github.io/nano-nanoid-cc
         /// </summary>
-        internal string GenerateId()
+        internal string RandomString()
         {
             var guid = Guid.NewGuid().ToString("N");
 
