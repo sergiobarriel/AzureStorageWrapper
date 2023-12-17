@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -134,6 +135,28 @@ namespace AzureStorageWrapper
                 
                 else throw new AzureStorageWrapperException($"container {containerName} doesn't exists!");
             }
+        }
+        
+        public async Task<Blob> DownloadBlobAsync(DownloadBlob command)
+        {
+            using var httpClient = new HttpClient();
+            
+            var response = await httpClient.GetAsync(command.Uri);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var fileName = _uriService.GetFileName(command.Uri);
+                var fileExtension = _uriService.GetFileExtension(command.Uri);
+                
+                throw new AzureStorageWrapperException($"something went wrong when downloading blob {fileName}.{fileExtension}: {response.ReasonPhrase}");
+            }
+            
+            var stream = await response.Content.ReadAsStreamAsync();
+
+            return new Blob()
+            {
+                Stream = stream
+            };
         }
 
         private async Task<string> GetSasUriAsync(GetSasUri command)
