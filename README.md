@@ -135,13 +135,12 @@ In example, if you upload the file `hello.md` file to container `files` you will
     "Container": "files",
     "Name": "hello",
     "Extension": "md",
-    "Uri": "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md",
-    "SasUri": "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
+    "Uri": "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md",
+    "SasUri": "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
     "SasExpires": "2023-09-03T16:17:02.8220993Z",
     "Metadata": {
         "key": "value",
-        "asw_folder": "5a19306fc5014a4",
-        "asw_timestamp": "03/09/2023 16:11:02"
+        "_timestamp": "03/09/2023 16:11:02"
     }
 }
 ```
@@ -152,7 +151,7 @@ It is your responsibility to save the reference (URI property) of the file you h
 
 The upload commands have a property called `UseVirtualFolder` which by default has a value of `true` but you can set it to `false` if you wish.
 
-Be careful. If you make that change, the files will NOT be saved in virtual directories, and file names may collide, causing files to be overwritten.
+**Be careful.** If you make that change, the files will NOT be saved in virtual directories, and file names may collide, causing files to be overwritten.
 
 In this case, you must be responsible for establishing your own mechanism to generate unique file names.
 
@@ -175,12 +174,10 @@ var response = await _azureStorageWrapper.UploadBlobAsync(command);
 
 To download a blob reference, you need specify the *Uri*.
 
-The *Folder* it's mandatory.
-
 ```csharp
 var command = new DownloadBlobReference()
 {
-    Uri = "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md"
+    Uri = "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md"
     ExpiresIn = 60,
 };
 
@@ -194,13 +191,11 @@ The response when *downloading* file reference resembles the response when *uplo
     "Container": "files",
     "Name": "hello",
     "Extension": "md",
-    "Uri": "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md",
-    "SasUri": "https://stgazstgwrapper001westeu.blob.core.windows.net/files/5a19306fc5014a4/hello.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
+    "Uri": "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md",
+    "SasUri": "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md?sv=2021-10-04\u0026se=2023-09-03T16%3A17%3A02Z\u0026sr=b\u0026sp=r\u0026sig=8hs8AzxABevSTc5y%2BhOWDDN%2FH5qFSpA8Omj4uqoxzms%3D",
     "SasExpires": "2023-09-03T16:17:02.8220993Z",
     "Metadata": {
-        "key": "value",
-        "asw_folder": "5a19306fc5014a4",
-        "asw_timestamp": "03/09/2023 16:11:02"
+        "_timestamp": "03/09/2023 16:11:02"
     }
 }
 ```
