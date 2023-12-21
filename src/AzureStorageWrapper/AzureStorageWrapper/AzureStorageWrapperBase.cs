@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Exceptions;
@@ -64,13 +66,43 @@ namespace AzureStorageWrapper
 
         internal static Dictionary<string, string> SanitizeDictionary(Dictionary<string, string> metadata)
         {
-            return metadata.ToDictionary(item => SanitizeDictionaryKey(item.Key), item => item.Value);
+            return metadata.ToDictionary(item => SanitizeKey(item.Key), item => SanitizeValue(item.Value));
 
-            string SanitizeDictionaryKey(string key)
+            static string SanitizeKey(string key)
             {
+                key = RemoveDiacritics(key);
+                
                 key = Regex.Replace(key, @"[^a-zA-Z0-9]+", "_");
 
                 return key.ToUpper();
+            }
+            
+            static string SanitizeValue(string @value)
+            {
+                value = RemoveDiacritics(value);
+
+                return value;
+            }
+            
+            static string RemoveDiacritics(string fileName)
+            {
+                var normalizedString = fileName.Normalize(NormalizationForm.FormD);
+            
+                var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
+            
+                foreach (var @char in normalizedString)
+                {
+                    var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(@char);
+            
+                    if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                    {
+                        stringBuilder.Append(@char);
+                    }
+                }
+            
+                return stringBuilder
+                    .ToString()
+                    .Normalize(NormalizationForm.FormC);
             }
         }
 

@@ -100,6 +100,7 @@ namespace AzureStorageWrapper.Tests.Should
 
             Assert.True(await PingAsync(response.SasUri));
         }
+        
 
         [Fact]
         public async Task UploadBase64_WithMultipleDotsInName_Should_UploadBlob()
