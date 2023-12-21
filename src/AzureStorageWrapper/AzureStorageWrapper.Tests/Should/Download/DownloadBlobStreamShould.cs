@@ -1,20 +1,21 @@
 ﻿using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Exceptions;
 using AzureStorageWrapper.Tests.Sources;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
 {
-    public class DownloadBlobStream : BaseShould
+    public class DownloadBlobStreamShould : BaseShould
     {
         private readonly IAzureStorageWrapper _azureStorageWrapper;
 
-        public DownloadBlobStream(IAzureStorageWrapper azureStorageWrapper)
+        public DownloadBlobStreamShould(IAzureStorageWrapper azureStorageWrapper)
         {
             _azureStorageWrapper = azureStorageWrapper;
         }
         
         [Fact]
-        public async Task DownloadBlob_ShouldReturnBlob()
+        public async Task DownloadBlob_Should_ReturnBlob()
         {
             var commandReference = new DownloadBlobReference()
             {
@@ -39,7 +40,7 @@ namespace AzureStorageWrapper.Tests.Should
         
         
         [Fact]
-        public async Task DownloadBlob_WithInvalidUri_ShouldReturnBlob()
+        public async Task DownloadBlob_WithInvalidUri_Should_ReturnBlob()
         {
             var commandReference = new DownloadBlobReference()
             {

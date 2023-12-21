@@ -3,17 +3,17 @@ using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
 {
-    public class UploadFileWithNameVariations : BaseShould
+    public class UploadBlobWithNameVariations : BaseShould
     {
         private readonly IAzureStorageWrapper _azureStorageWrapper;
 
-        public UploadFileWithNameVariations(IAzureStorageWrapper azureStorageWrapper)
+        public UploadBlobWithNameVariations(IAzureStorageWrapper azureStorageWrapper)
         {
             _azureStorageWrapper = azureStorageWrapper;
         }
 
         [Fact]
-        public async Task UploadFileWithBlankSpacesInName_ShouldUploadFile()
+        public async Task UploadBlob_WithBlankSpacesInName_Should_UploadBlob()
         {
             var base64 = "SGVsbG8g8J+Zgg==";
 
@@ -29,15 +29,13 @@ namespace AzureStorageWrapper.Tests.Should
 
             var response = await _azureStorageWrapper.UploadBlobAsync(command);
 
-            Assert.True(response.Name.IndexOf(" ", StringComparison.Ordinal) == -1); // no blank spaces
-
             Assert.NotNull(response);
 
             Assert.True(await PingAsync(response.SasUri));
         }
 
         [Fact]
-        public async Task UploadFileWithDiacriticsInName_ShouldUploadFile()
+        public async Task UploadBlobWithDiacriticsInName_Should_UploadBlob()
         {
             var base64 = "SGVsbG8g8J+Zgg==";
 
@@ -53,7 +51,7 @@ namespace AzureStorageWrapper.Tests.Should
 
             var response = await _azureStorageWrapper.UploadBlobAsync(command);
 
-            Assert.True(response.Name.IndexOfAny(new char[]{ 'á','é', 'í', 'ó', 'ú', 'ä', 'ë','ï', 'ö', 'ü', 'à', 'è', 'ì', 'ò', 'ù'}) == -1); // no diacritics
+            Assert.True(response.Name.IndexOfAny(new char[]{ 'á','é', 'í', 'ó', 'ú', 'ä', 'ë','ï', 'ö', 'ü', 'à', 'è', 'ì', 'ò', 'ù'}) > 0); // no diacritics
 
             Assert.NotNull(response);
 

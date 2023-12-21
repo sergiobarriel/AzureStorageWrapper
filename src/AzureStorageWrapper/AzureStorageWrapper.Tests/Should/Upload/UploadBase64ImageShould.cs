@@ -14,7 +14,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
 
         [Fact]
-        public async Task UploadBase64ImageWithoutHeader_ShouldUploadFile()
+        public async Task UploadBase64Image_WithoutHeader_Should_UploadBlob()
         {
             var command = new UploadBase64()
             {
@@ -37,7 +37,7 @@ namespace AzureStorageWrapper.Tests.Should
         /// </summary>
         /// <returns></returns>
         [Fact]
-        public async Task UploadBase64ImageWithHeader_ShouldUploadFile()
+        public async Task UploadBase64_Image_WithHeader_Should_UploadBlob()
         {
             var command = new UploadBase64()
             {

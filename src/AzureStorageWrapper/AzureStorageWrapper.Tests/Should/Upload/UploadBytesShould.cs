@@ -1,25 +1,26 @@
 ﻿using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Exceptions;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
 {
-    public class UploadStreamShould : BaseShould
+    public class UploadBytesShould : BaseShould
     {
         private readonly IAzureStorageWrapper _azureStorageWrapper;
 
-        public UploadStreamShould(IAzureStorageWrapper azureStorageWrapper)
+        public UploadBytesShould(IAzureStorageWrapper azureStorageWrapper)
         {
             _azureStorageWrapper = azureStorageWrapper;
         }
 
         [Fact]
-        public async Task UploadEmptyStream_ShouldThrowException()
+        public async Task UploadEmptyBytes_Should_ThrowException()
         {
-            var stream = new MemoryStream(Convert.FromBase64String(string.Empty));
+            var bytes = Convert.FromBase64String(string.Empty);
 
-            var command = new UploadStream()
+            var command = new UploadBytes()
             {
-                Stream = stream,
+                Bytes = bytes,
                 Container = "files",
                 Name = "hello",
                 Extension = "md",
@@ -35,13 +36,13 @@ namespace AzureStorageWrapper.Tests.Should
 
         [Theory]
         [MemberData(nameof(WrongFileProperties))]
-        public async Task UploadStreamFile_WithWrongFileProperties_ShouldThrowException(string container, string fileName, string fileExtension)
+        public async Task UploadBytesBlob_WithWrongFileProperties_Should_ThrowException(string container, string fileName, string fileExtension)
         {
-            var stream = new MemoryStream(Convert.FromBase64String("SGVsbG8g8J+Zgg=="));
+            var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");
 
-            var command = new UploadStream()
+            var command = new UploadBytes()
             {
-                Stream = stream,
+                Bytes = bytes,
                 Container = container,
                 Name = fileName,
                 Extension = fileExtension,
@@ -57,13 +58,13 @@ namespace AzureStorageWrapper.Tests.Should
 
         [Theory]
         [MemberData(nameof(WrongMetadata))]
-        public async Task UploadStreamFile_WithWrongMetadata_ShouldUploadFile(Dictionary<string, string> properties)
+        public async Task UploadBytesBlob_WithWrongMetadata_Should_UploadBlob(Dictionary<string, string> properties)
         {
-            var stream = new MemoryStream(Convert.FromBase64String("SGVsbG8g8J+Zgg=="));
+            var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");
 
-            var command = new UploadStream()
+            var command = new UploadBytes()
             {
-                Stream = stream,
+                Bytes = bytes,
                 Container = "files",
                 Name = "hello",
                 Extension = "md",
@@ -78,13 +79,13 @@ namespace AzureStorageWrapper.Tests.Should
         }
 
         [Fact]
-        public async Task UploadStream_ShouldUploadFile()
+        public async Task UploadBytesBlob_Should_UploadBlob()
         {
-            var stream = new MemoryStream(Convert.FromBase64String("SGVsbG8g8J+Zgg=="));
+            var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");
 
-            var response = await _azureStorageWrapper.UploadBlobAsync(new UploadStream()
+            var response = await _azureStorageWrapper.UploadBlobAsync(new UploadBytes()
             {
-                Stream = stream,
+                Bytes = bytes,
                 Container = "files",
                 Name = "hello",
                 Extension = "md",

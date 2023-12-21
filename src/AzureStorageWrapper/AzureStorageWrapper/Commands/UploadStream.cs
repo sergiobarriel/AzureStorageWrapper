@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using AzureStorageWrapper.Exceptions;
 
 namespace AzureStorageWrapper.Commands
 {

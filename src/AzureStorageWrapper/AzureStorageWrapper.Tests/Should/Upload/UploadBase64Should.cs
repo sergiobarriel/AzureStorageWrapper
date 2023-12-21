@@ -1,4 +1,5 @@
 ﻿using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Exceptions;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
@@ -13,7 +14,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
         
         [Fact]
-        public async Task UploadEmptyBase64_ShouldThrowException()
+        public async Task UploadEmptyBase64_Should_ThrowException()
         {
             var base64 = string.Empty;
 
@@ -35,7 +36,7 @@ namespace AzureStorageWrapper.Tests.Should
 
         [Theory]
         [MemberData(nameof(WrongFileProperties))]
-        public async Task UploadBase64_WithWrongFileProperties_ShouldThrowException(string container, string fileName, string fileExtension)
+        public async Task UploadBase64Blob_WithWrongFileProperties_Should_ThrowException(string container, string fileName, string fileExtension)
         {
             var base64 = "SGVsbG8g8J+Zgg==";
 
@@ -57,7 +58,7 @@ namespace AzureStorageWrapper.Tests.Should
 
         [Theory]
         [MemberData(nameof(WrongMetadata))]
-        public async Task UploadBase64File_WithWrongMetadata_ShouldUploadFile(Dictionary<string, string> properties)
+        public async Task UploadBase64Blob_WithWrongMetadata_Should_UploadBlob(Dictionary<string, string> properties)
         {
             var base64 = "SGVsbG8g8J+Zgg==";
 
@@ -79,7 +80,7 @@ namespace AzureStorageWrapper.Tests.Should
 
 
         [Fact]
-        public async Task UploadBase64_ShouldUploadFile()
+        public async Task UploadBase64_Should_UploadBlob()
         {
             var base64 = "SGVsbG8g8J+Zgg==";
 
@@ -101,7 +102,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
 
         [Fact]
-        public async Task UploadBase64WithMultipleDotsInName_ShouldUploadFile()
+        public async Task UploadBase64_WithMultipleDotsInName_Should_UploadBlob()
         {
             var base64 = "SGVsbG8g8J+Zgg==";
 

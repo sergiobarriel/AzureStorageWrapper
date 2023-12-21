@@ -1,20 +1,21 @@
 ﻿using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Exceptions;
 using AzureStorageWrapper.Tests.Sources;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
 {
-    public class DownloadFileReferenceShould : BaseShould
+    public class DownloadBlobReferenceShould : BaseShould
     {
         private readonly IAzureStorageWrapper _azureStorageWrapper;
 
-        public DownloadFileReferenceShould(IAzureStorageWrapper azureStorageWrapper)
+        public DownloadBlobReferenceShould(IAzureStorageWrapper azureStorageWrapper)
         {
             _azureStorageWrapper = azureStorageWrapper;
         }
 
         [Fact]
-        public async Task DownloadBlobReferenceWithManyDots_ShouldReturnReference()
+        public async Task DownloadBlobReference_WithManyDots_Should_ReturnReference()
         {
             var command = new DownloadBlobReference()
             {
@@ -30,7 +31,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
 
         [Fact]
-        public async Task DownloadBlobReferenceWithExtensions_ShouldReturnReference()
+        public async Task DownloadBlobReference_WithExtensions_Should_ReturnReference()
         {
             var command = new DownloadBlobReference()
             {
@@ -46,7 +47,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
 
         [Fact]
-        public async Task DownloadBlobReference_ShouldReturnReference()
+        public async Task DownloadBlobReference_Should_ReturnReference()
         {
             var command = new DownloadBlobReference()
             {
@@ -62,7 +63,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
 
         [Fact]
-        public async Task DownloadBlobReference_WithWrongUri_ShouldThrowException()
+        public async Task DownloadBlobReference_WithWrongUri_Should_ThrowException()
         {
             var command = new DownloadBlobReference()
             {
@@ -79,7 +80,7 @@ namespace AzureStorageWrapper.Tests.Should
 
 
         [Fact]
-        public async Task DownloadBlobReference_WithUnExistingUri_ShouldThrowException()
+        public async Task DownloadBlobReference_WithUnExistingUri_Should_ThrowException()
         {
             var command = new DownloadBlobReference()
             {
@@ -97,7 +98,7 @@ namespace AzureStorageWrapper.Tests.Should
 
         [Theory]
         [MemberData(nameof(WrongExpiresIn))]
-        public async Task DownloadBlobReference_WithWrongExpiration_ShouldReturnReference(int expiresIn)
+        public async Task DownloadBlobReference_WithWrongExpiration_Should_ReturnReference(int expiresIn)
         {
             var command = new DownloadBlobReference()
             {
@@ -113,7 +114,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
 
         [Fact]
-        public async Task DownloadBlobReference_WithHighExpiration_ShouldThrowException()
+        public async Task DownloadBlobReference_WithHighExpiration_Should_ThrowException()
         {
             var command = new DownloadBlobReference()
             {
