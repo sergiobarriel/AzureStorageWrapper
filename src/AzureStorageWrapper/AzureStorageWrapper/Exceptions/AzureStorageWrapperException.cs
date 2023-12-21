@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AzureStorageWrapper
+namespace AzureStorageWrapper.Exceptions
 {
     public class AzureStorageWrapperException : Exception
     {

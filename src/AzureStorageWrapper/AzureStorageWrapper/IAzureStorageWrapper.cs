@@ -21,6 +21,13 @@ namespace AzureStorageWrapper
         Task<BlobReference> DownloadBlobReferenceAsync(DownloadBlobReference command);
 
         /// <summary>
+        /// Download blob
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        Task<Blob> DownloadBlobAsync(DownloadBlob command);
+        
+        /// <summary>
         /// Delete blob from Azure Storage container
         /// </summary>
         /// <param name="command"></param>

@@ -25,7 +25,12 @@ namespace AzureStorageWrapper
         {
             var uriObject = new Uri(uri);
 
-            return Path.GetFileNameWithoutExtension(uriObject.LocalPath);
+            var container = GetContainer(uri);
+            var extension = GetFileExtension(uri);
+
+            return uriObject.LocalPath.Replace($"/{container}/", string.Empty).Replace($".{extension}", string.Empty);
+            
+            // return Path.GetFileNameWithoutExtension(uriObject.LocalPath);
         }
         
         public string GetFileExtension(string uri)

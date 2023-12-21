@@ -1,4 +1,6 @@
-﻿namespace AzureStorageWrapper
+﻿using AzureStorageWrapper.Exceptions;
+
+namespace AzureStorageWrapper
 {
     public class AzureStorageWrapperConfiguration
     {
@@ -36,36 +38,30 @@
             }
         }
 
-        private int defaultSasUriExpiration;
+        private int _defaultSasUriExpiration;
         public int DefaultSasUriExpiration
         {
-            get => defaultSasUriExpiration;
+            get => _defaultSasUriExpiration;
             set
             {
                 if (value < 0)
                     throw new AzureStorageWrapperException($"{nameof(DefaultSasUriExpiration)} should be greater than zero");
                 
                 if (value == 0)
-                    defaultSasUriExpiration = 360;
+                    _defaultSasUriExpiration = 360;
 
                 if (value > MaxSasUriExpiration)
                     throw new AzureStorageWrapperException($"{nameof(DefaultSasUriExpiration)} should be lower than {nameof(MaxSasUriExpiration)}");
-
-
-                defaultSasUriExpiration = value;
+                
+                _defaultSasUriExpiration = value;
             }
         }
-
- 
-
+        
         private bool _createContainerIfNotExists;
         public bool CreateContainerIfNotExists
         {
             get => _createContainerIfNotExists;
-            set
-            {
-                _createContainerIfNotExists = value;
-            }
+            set => _createContainerIfNotExists = value;
         }
     }
 }

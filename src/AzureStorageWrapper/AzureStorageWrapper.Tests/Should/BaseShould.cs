@@ -13,7 +13,6 @@
 
             return response.IsSuccessStatusCode;
         }
-
         public static IEnumerable<object[]> WrongMetadata() => new List<object[]>()
         {
             new object[] { new Dictionary<string, string>() },

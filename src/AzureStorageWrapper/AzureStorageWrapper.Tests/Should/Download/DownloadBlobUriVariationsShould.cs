@@ -4,18 +4,18 @@ using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
 {
-    public class DownloadFileUriVariationsShould : BaseShould
+    public class DownloadBlobUriVariationsShould : BaseShould
     {
         private readonly IAzureStorageWrapper _azureStorageWrapper;
 
-        public DownloadFileUriVariationsShould(IAzureStorageWrapper azureStorageWrapper)
+        public DownloadBlobUriVariationsShould(IAzureStorageWrapper azureStorageWrapper)
         {
             _azureStorageWrapper = azureStorageWrapper;
         }
 
 
         [Fact]
-        public async Task DownloadFile_WithEncodedFileName_ShouldDownloadFileReference()
+        public async Task DownloadBlob_WithEncodedFileName_Should_ReturnFileReference()
         {
             var command = new DownloadBlobReference()
             {
@@ -29,7 +29,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
 
         [Fact]
-        public async Task DownloadFile_WithBlanksFileName_ShouldDownloadFileReference()
+        public async Task DownloadBlob_WithBlanksFileName_Should_ReturnFileReference()
         {
             var command = new DownloadBlobReference()
             {

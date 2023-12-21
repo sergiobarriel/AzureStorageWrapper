@@ -13,7 +13,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
 
         [Fact]
-        public async Task UploadFileInContainer_ShouldUploadFile()
+        public async Task UploadBlob_InContainer_Should_UploadBlob()
         {
             var base64 = "SGVsbG8g8J+Zgg==";
         
@@ -37,7 +37,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
     
         [Fact]
-        public async Task UploadFileInVirtualFolder_ShouldUploadFile()
+        public async Task UploadBlob_InVirtualFolder_Should_UploadBlob()
         {
             var base64 = "SGVsbG8g8J+Zgg==";
         
@@ -61,7 +61,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
     
         [Fact]
-        public async Task UploadFile_WithoutSettingUseVirtualFolderProperty_ShouldUploadFile()
+        public async Task UploadBlob_WithoutSetting_UseVirtualFolderProperty_Should_UploadBlob()
         {
             var base64 = "SGVsbG8g8J+Zgg==";
         
