@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Exceptions;
 using AzureStorageWrapper.Responses;
 
 namespace AzureStorageWrapper
 {
     public class AzureStorageWrapper : AzureStorageWrapperBase, IAzureStorageWrapper
     {
-        private readonly IUriService _uriService;
+        private readonly IUriService _uriService = new UriService();
 
-        public AzureStorageWrapper(AzureStorageWrapperConfiguration configuration, IUriService uriService) : base(configuration)
+        public AzureStorageWrapper(AzureStorageWrapperConfiguration configuration) : base(configuration)
         {
-            _uriService = uriService;
         }
 
         public async Task<BlobReference> UploadBlobAsync(UploadBlob command)
@@ -29,11 +29,11 @@ namespace AzureStorageWrapper
             
             var container = GetContainer(command.Container);
             
-            var fileName = SanitizeFileName(command.Name);
+            // var fileName = SanitizeFileName(command.Name);
 
             var blobClient = command.UseVirtualFolder
-                ? container.GetBlobClient($"{RandomString()}/{fileName}.{command.Extension}")
-                : container.GetBlobClient($"{fileName}.{command.Extension}");
+                ? container.GetBlobClient($"{RandomString()}/{command.Name}.{command.Extension}")
+                : container.GetBlobClient($"{command.Name}.{command.Extension}");
 
             await blobClient.UploadAsync(command.GetContent(), overwrite: true);
 
@@ -45,18 +45,18 @@ namespace AzureStorageWrapper
             var sasUri = await GetSasUriAsync(new GetSasUri()
             {
                 Uri = blobClient.Uri.AbsoluteUri,
-                ExpiresIn = _configuration.DefaultSasUriExpiration,
+                ExpiresIn = Configuration.DefaultSasUriExpiration,
             });
 
             var blobReference = new BlobReference()
             {
                 Container = command.Container,
-                Name = fileName,
+                Name = command.Name,
                 Extension = command.Extension,
                 Uri = blobClient.Uri.AbsoluteUri,
                 SasUri = sasUri,
                 Metadata = command.Metadata,
-                SasExpires = DateTime.UtcNow.AddSeconds(_configuration.DefaultSasUriExpiration)
+                SasExpires = DateTime.UtcNow.AddSeconds(Configuration.DefaultSasUriExpiration)
             };
 
             return blobReference;
@@ -69,7 +69,7 @@ namespace AzureStorageWrapper
             var containerName = _uriService.GetContainer(command.Uri);
             var fileName = GetFileName(command.Uri);
 
-            var container = new BlobContainerClient(_configuration.ConnectionString, containerName);
+            var container = GetContainer(containerName);
             
             if (! await container.ExistsAsync())
                 throw new AzureStorageWrapperException($"container {containerName} doesn't exists!");
@@ -91,7 +91,7 @@ namespace AzureStorageWrapper
                 {
                     Uri = command.Uri,
                     ExpiresIn = command.ExpiresIn <= 0
-                        ? _configuration.DefaultSasUriExpiration
+                        ? Configuration.DefaultSasUriExpiration
                         : command.ExpiresIn,
                 }),
                 SasExpires = DateTime.MaxValue,
@@ -121,7 +121,7 @@ namespace AzureStorageWrapper
 
         private BlobContainerClient GetContainer(string containerName)
         {
-            return new BlobContainerClient(_configuration.ConnectionString, containerName);
+            return new BlobContainerClient(Configuration.ConnectionString, containerName);
         }
 
         private async Task CreateContainerIfNotExists(string containerName)
@@ -130,7 +130,7 @@ namespace AzureStorageWrapper
             
             if (!await container.ExistsAsync())
             {
-                if (_configuration.CreateContainerIfNotExists)
+                if (Configuration.CreateContainerIfNotExists)
                     await container.CreateIfNotExistsAsync();
                 
                 else throw new AzureStorageWrapperException($"container {containerName} doesn't exists!");
@@ -163,10 +163,9 @@ namespace AzureStorageWrapper
         {
             Validate(command);
 
-            var containerName = _uriService.GetContainer(command.Uri);
             var fileName = GetFileName(command.Uri);
 
-            var container = new BlobContainerClient(_configuration.ConnectionString, containerName);
+            var container = GetContainer(_uriService.GetContainer(command.Uri));
 
             var blobClient = container.GetBlobClient($"{fileName.name}.{fileName.extension}");
 
@@ -193,39 +192,39 @@ namespace AzureStorageWrapper
             return (name: temp, extension: extension);
         }
         
-        private static string SanitizeFileName(string fileName)
-        {
-            var withoutBlanks = RemoveBlanks(fileName);
-
-            var withoutDiacritics = RemoveDiacritics(withoutBlanks);
-
-            return withoutDiacritics;
-
-            static string RemoveBlanks(string fileName)
-            {
-                return Regex.Replace(fileName, @"[^\w\d\-]", "_");
-            }
-
-            static string RemoveDiacritics(string fileName)
-            {
-                var normalizedString = fileName.Normalize(NormalizationForm.FormD);
-
-                var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
-
-                foreach (var @char in normalizedString)
-                {
-                    var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(@char);
-
-                    if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-                    {
-                        stringBuilder.Append(@char);
-                    }
-                }
-
-                return stringBuilder
-                    .ToString()
-                    .Normalize(NormalizationForm.FormC);
-            }
-        }
+        // private static string SanitizeFileName(string fileName)
+        // {
+        //     var withoutBlanks = RemoveBlanks(fileName);
+        //
+        //     var withoutDiacritics = RemoveDiacritics(withoutBlanks);
+        //
+        //     return withoutDiacritics;
+        //
+        //     static string RemoveBlanks(string fileName)
+        //     {
+        //         return Regex.Replace(fileName, @"[^\w\d\-]", "_");
+        //     }
+        //
+        //     static string RemoveDiacritics(string fileName)
+        //     {
+        //         var normalizedString = fileName.Normalize(NormalizationForm.FormD);
+        //
+        //         var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
+        //
+        //         foreach (var @char in normalizedString)
+        //         {
+        //             var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(@char);
+        //
+        //             if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+        //             {
+        //                 stringBuilder.Append(@char);
+        //             }
+        //         }
+        //
+        //         return stringBuilder
+        //             .ToString()
+        //             .Normalize(NormalizationForm.FormC);
+        //     }
+        // }
     }
 }

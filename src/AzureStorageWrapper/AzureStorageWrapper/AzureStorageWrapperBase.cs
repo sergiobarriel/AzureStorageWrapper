@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Exceptions;
 
 namespace AzureStorageWrapper
 {
     public abstract class AzureStorageWrapperBase
     {
-        internal readonly AzureStorageWrapperConfiguration _configuration;
+        internal readonly AzureStorageWrapperConfiguration Configuration;
 
         protected AzureStorageWrapperBase(AzureStorageWrapperConfiguration configuration)
         {
-            _configuration = configuration;
+            Configuration = configuration;
         }
 
         internal void Validate(UploadBlob command)
@@ -32,8 +33,8 @@ namespace AzureStorageWrapper
             if (string.IsNullOrEmpty(command.Uri))
                 throw new AzureStorageWrapperException($"{nameof(command.Uri)} is empty!");
 
-            if (command.ExpiresIn > _configuration.MaxSasUriExpiration)
-                throw new AzureStorageWrapperException($"{nameof(command.ExpiresIn)} should be lower than {_configuration.MaxSasUriExpiration}");
+            if (command.ExpiresIn > Configuration.MaxSasUriExpiration)
+                throw new AzureStorageWrapperException($"{nameof(command.ExpiresIn)} should be lower than {Configuration.MaxSasUriExpiration}");
         }
 
         internal void Validate(DeleteBlob command)
@@ -47,21 +48,21 @@ namespace AzureStorageWrapper
             if (string.IsNullOrEmpty(command.Uri))
                 throw new AzureStorageWrapperException($"{nameof(command.Uri)} is empty!");
 
-            if (command.ExpiresIn > _configuration.MaxSasUriExpiration)
-                throw new AzureStorageWrapperException($"{nameof(command.ExpiresIn)} should be lower than {_configuration.MaxSasUriExpiration}");
+            if (command.ExpiresIn > Configuration.MaxSasUriExpiration)
+                throw new AzureStorageWrapperException($"{nameof(command.ExpiresIn)} should be lower than {Configuration.MaxSasUriExpiration}");
         }
 
         /// <summary>
         /// ~2 centuries of work are needed in order to have a 1% probability of at least one collision: https://alex7kom.github.io/nano-nanoid-cc
         /// </summary>
-        internal string RandomString()
+        internal static string RandomString()
         {
             var guid = Guid.NewGuid().ToString("N");
 
             return guid.Substring(0, 15);
         }
 
-        internal Dictionary<string, string> SanitizeDictionary(Dictionary<string, string> metadata)
+        internal static Dictionary<string, string> SanitizeDictionary(Dictionary<string, string> metadata)
         {
             return metadata.ToDictionary(item => SanitizeDictionaryKey(item.Key), item => item.Value);
 

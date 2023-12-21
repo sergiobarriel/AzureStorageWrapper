@@ -13,5 +13,6 @@
         public const string ExistingFileWithBlanks = "https://stgazstgwrapper001westeu.blob.core.windows.net/static/hello hello.md";
 
         public const string ExistingFileWithUriEncoded = "https://stgazstgwrapper001westeu.blob.core.windows.net/static/hello%20hello.md";
+
     }
 }

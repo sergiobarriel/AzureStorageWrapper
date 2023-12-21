@@ -3,17 +3,17 @@ using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should
 {
-    public class DeleteFileShould : BaseShould
+    public class DeleteBlobShould : BaseShould
     {
         private readonly IAzureStorageWrapper _azureStorageWrapper;
 
-        public DeleteFileShould(IAzureStorageWrapper azureStorageWrapper)
+        public DeleteBlobShould(IAzureStorageWrapper azureStorageWrapper)
         {
             _azureStorageWrapper = azureStorageWrapper;
         }
 
         [Fact]
-        public async Task DeleteFile_ShouldDeleteFile()
+        public async Task DeleteBlob_ShouldDeleteBlob()
         {
             var base64 = "SGVsbG8g8J+Zgg==";
 
