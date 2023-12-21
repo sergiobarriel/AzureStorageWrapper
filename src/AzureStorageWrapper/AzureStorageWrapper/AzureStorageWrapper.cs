@@ -40,7 +40,9 @@ namespace AzureStorageWrapper
             command.Metadata ??= new Dictionary<string, string>();
             command.Metadata.TryAdd("_timestamp", $"{DateTime.UtcNow}");
 
-            await blobClient.SetMetadataAsync(SanitizeDictionary(command.Metadata));
+            var sanitizedDictionary = SanitizeDictionary(command.Metadata);
+            
+            await blobClient.SetMetadataAsync(sanitizedDictionary);
 
             var sasUri = await GetSasUriAsync(new GetSasUri()
             {
@@ -55,7 +57,7 @@ namespace AzureStorageWrapper
                 Extension = command.Extension,
                 Uri = blobClient.Uri.AbsoluteUri,
                 SasUri = sasUri,
-                Metadata = command.Metadata,
+                Metadata = sanitizedDictionary,
                 SasExpires = DateTime.UtcNow.AddSeconds(Configuration.DefaultSasUriExpiration)
             };
 
@@ -191,40 +193,5 @@ namespace AzureStorageWrapper
             
             return (name: temp, extension: extension);
         }
-        
-        // private static string SanitizeFileName(string fileName)
-        // {
-        //     var withoutBlanks = RemoveBlanks(fileName);
-        //
-        //     var withoutDiacritics = RemoveDiacritics(withoutBlanks);
-        //
-        //     return withoutDiacritics;
-        //
-        //     static string RemoveBlanks(string fileName)
-        //     {
-        //         return Regex.Replace(fileName, @"[^\w\d\-]", "_");
-        //     }
-        //
-        //     static string RemoveDiacritics(string fileName)
-        //     {
-        //         var normalizedString = fileName.Normalize(NormalizationForm.FormD);
-        //
-        //         var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
-        //
-        //         foreach (var @char in normalizedString)
-        //         {
-        //             var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(@char);
-        //
-        //             if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-        //             {
-        //                 stringBuilder.Append(@char);
-        //             }
-        //         }
-        //
-        //         return stringBuilder
-        //             .ToString()
-        //             .Normalize(NormalizationForm.FormC);
-        //     }
-        // }
     }
 }

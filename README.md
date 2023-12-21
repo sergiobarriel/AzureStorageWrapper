@@ -205,6 +205,7 @@ The response when *downloading* file reference resembles the response when *uplo
 These individuals have contributed to the repository through suggestions, error corrections, or by opening issues. Thanks 😊
 
 - [ginodcs](https://github.com/ginodcs)
+- [joseantoniolopez](https://github.com/joseantoniolopez)
 
 # Sponsor
 
