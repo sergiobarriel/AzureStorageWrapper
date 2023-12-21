@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,26 +14,26 @@ using AzureStorageWrapper.Responses;
 
 namespace AzureStorageWrapper
 {
-    public class AzureStorageWrapper : AzureStorageWrapperBase, IAzureStorageWrapper
+    public class AzureStorageWrapper : IAzureStorageWrapper
     {
+        private readonly AzureStorageWrapperConfiguration _configuration;
         private readonly IUriService _uriService = new UriService();
 
-        public AzureStorageWrapper(AzureStorageWrapperConfiguration configuration) : base(configuration)
+        public AzureStorageWrapper(AzureStorageWrapperConfiguration configuration)
         {
+            _configuration = configuration;
         }
 
         public async Task<BlobReference> UploadBlobAsync(UploadBlob command)
         {
-            Validate(command);
+            command.Validate();
 
             await CreateContainerIfNotExists(command.Container);
             
             var container = GetContainer(command.Container);
             
-            // var fileName = SanitizeFileName(command.Name);
-
             var blobClient = command.UseVirtualFolder
-                ? container.GetBlobClient($"{RandomString()}/{command.Name}.{command.Extension}")
+                ? container.GetBlobClient($"{GetRandomId()}/{command.Name}.{command.Extension}")
                 : container.GetBlobClient($"{command.Name}.{command.Extension}");
 
             await blobClient.UploadAsync(command.GetContent(), overwrite: true);
@@ -47,7 +48,7 @@ namespace AzureStorageWrapper
             var sasUri = await GetSasUriAsync(new GetSasUri()
             {
                 Uri = blobClient.Uri.AbsoluteUri,
-                ExpiresIn = Configuration.DefaultSasUriExpiration,
+                ExpiresIn = _configuration.DefaultSasUriExpiration,
             });
 
             var blobReference = new BlobReference()
@@ -58,7 +59,7 @@ namespace AzureStorageWrapper
                 Uri = blobClient.Uri.AbsoluteUri,
                 SasUri = sasUri,
                 Metadata = sanitizedDictionary,
-                SasExpires = DateTime.UtcNow.AddSeconds(Configuration.DefaultSasUriExpiration)
+                SasExpires = DateTime.UtcNow.AddSeconds(_configuration.DefaultSasUriExpiration)
             };
 
             return blobReference;
@@ -66,7 +67,7 @@ namespace AzureStorageWrapper
         
         public async Task<BlobReference> DownloadBlobReferenceAsync(DownloadBlobReference command)
         {
-            Validate(command);
+            command.Validate(_configuration);
 
             var containerName = _uriService.GetContainer(command.Uri);
             var fileName = GetFileName(command.Uri);
@@ -93,7 +94,7 @@ namespace AzureStorageWrapper
                 {
                     Uri = command.Uri,
                     ExpiresIn = command.ExpiresIn <= 0
-                        ? Configuration.DefaultSasUriExpiration
+                        ? _configuration.DefaultSasUriExpiration
                         : command.ExpiresIn,
                 }),
                 SasExpires = DateTime.MaxValue,
@@ -103,7 +104,7 @@ namespace AzureStorageWrapper
 
         public async Task DeleteBlobAsync(DeleteBlob command)
         {
-            Validate(command);
+            command.Validate();
 
             var containerName = _uriService.GetContainer(command.Uri);
             var fileName = GetFileName(command.Uri);
@@ -123,7 +124,7 @@ namespace AzureStorageWrapper
 
         private BlobContainerClient GetContainer(string containerName)
         {
-            return new BlobContainerClient(Configuration.ConnectionString, containerName);
+            return new BlobContainerClient(_configuration.ConnectionString, containerName);
         }
 
         private async Task CreateContainerIfNotExists(string containerName)
@@ -132,7 +133,7 @@ namespace AzureStorageWrapper
             
             if (!await container.ExistsAsync())
             {
-                if (Configuration.CreateContainerIfNotExists)
+                if (_configuration.CreateContainerIfNotExists)
                     await container.CreateIfNotExistsAsync();
                 
                 else throw new AzureStorageWrapperException($"container {containerName} doesn't exists!");
@@ -141,6 +142,8 @@ namespace AzureStorageWrapper
         
         public async Task<Blob> DownloadBlobAsync(DownloadBlob command)
         {
+            command.Validate();
+            
             using var httpClient = new HttpClient();
             
             var response = await httpClient.GetAsync(command.Uri);
@@ -163,7 +166,7 @@ namespace AzureStorageWrapper
 
         private async Task<string> GetSasUriAsync(GetSasUri command)
         {
-            Validate(command);
+            command.Validate(_configuration);
 
             var fileName = GetFileName(command.Uri);
 
@@ -192,6 +195,58 @@ namespace AzureStorageWrapper
                 .Replace($".{extension}", string.Empty);
             
             return (name: temp, extension: extension);
+        }
+        
+        private static Dictionary<string, string> SanitizeDictionary(Dictionary<string, string> metadata)
+        {
+            return metadata.ToDictionary(item => SanitizeKey(item.Key), item => SanitizeValue(item.Value));
+
+            static string SanitizeKey(string key)
+            {
+                key = RemoveDiacritics(key);
+                
+                key = Regex.Replace(key, @"[^a-zA-Z0-9]+", "_");
+
+                return key;
+            }
+            
+            static string SanitizeValue(string @value)
+            {
+                value = RemoveDiacritics(value);
+
+                return value;
+            }
+            
+            static string RemoveDiacritics(string fileName)
+            {
+                var normalizedString = fileName.Normalize(NormalizationForm.FormD);
+            
+                var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
+            
+                foreach (var @char in normalizedString)
+                {
+                    var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(@char);
+            
+                    if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                    {
+                        stringBuilder.Append(@char);
+                    }
+                }
+            
+                return stringBuilder
+                    .ToString()
+                    .Normalize(NormalizationForm.FormC);
+            }
+        }
+        
+        /// <summary>
+        /// ~2 centuries of work are needed in order to have a 1% probability of at least one collision: https://alex7kom.github.io/nano-nanoid-cc
+        /// </summary>
+        private static string GetRandomId()
+        {
+            var guid = Guid.NewGuid().ToString("N");
+
+            return guid.Substring(0, 15);
         }
     }
 }

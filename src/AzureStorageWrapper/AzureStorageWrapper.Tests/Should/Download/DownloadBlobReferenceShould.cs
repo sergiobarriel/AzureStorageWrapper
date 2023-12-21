@@ -3,7 +3,7 @@ using AzureStorageWrapper.Exceptions;
 using AzureStorageWrapper.Tests.Sources;
 using Xunit;
 
-namespace AzureStorageWrapper.Tests.Should
+namespace AzureStorageWrapper.Tests.Should.Download
 {
     public class DownloadBlobReferenceShould : BaseShould
     {

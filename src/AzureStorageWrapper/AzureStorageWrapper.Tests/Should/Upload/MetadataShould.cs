@@ -1,7 +1,7 @@
 using AzureStorageWrapper.Commands;
 using Xunit;
 
-namespace AzureStorageWrapper.Tests.Should;
+namespace AzureStorageWrapper.Tests.Should.Upload;
 
 public class MetadataShould : BaseShould
 {
@@ -36,14 +36,14 @@ public class MetadataShould : BaseShould
 
         Assert.NotNull(response);
 
-        Assert.True(response.Metadata.TryGetValue("AEIOU", out var _));
-        Assert.True(response.Metadata.TryGetValue("AEIOUAEIOUAEIOU", out var _));
+        Assert.True(response.Metadata.TryGetValue("aeiou", out var _));
+        Assert.True(response.Metadata.TryGetValue("aeiouaeiouaeiou", out var _));
         
         Assert.True(await PingAsync(response.SasUri));
     }
         
     [Fact]
-    public async Task UploadBlob_WithMetadataDiacriticsValue_Should_UploadBlob()
+    public async Task UploadBlob_WithDiacriticsMetadataValue_Should_UploadBlob()
     {
         var base64 = "SGVsbG8g8J+Zgg==";
         var diacriticsOne = "áéíóú";
@@ -66,8 +66,37 @@ public class MetadataShould : BaseShould
 
         Assert.NotNull(response);
         
-        Assert.Equal("aeiou", response.Metadata["DIACRITICS_ONE"]);
-        Assert.Equal("aeiouaeiouaeiou", response.Metadata["DIACRITICS_TWO"]);
+        Assert.Equal("aeiou", response.Metadata["diacritics_one"]);
+        Assert.Equal("aeiouaeiouaeiou", response.Metadata["diacritics_two"]);
+
+        Assert.True(await PingAsync(response.SasUri));
+    }
+    
+    
+    [Fact]
+    public async Task UploadBlob_WithBlankSpaceMetadataKey_Should_UploadBlob()
+    {
+        var base64 = "SGVsbG8g8J+Zgg==";
+
+        var command = new UploadBase64()
+        {
+            Base64 = base64,
+            Container = "files",
+            Name = "hello",
+            Extension = "md",
+            Metadata = new Dictionary<string, string>()
+            {
+                { "xxx xxx", "xxx" }, 
+                { "zzz zzz", "zzz" }, 
+            },
+        };
+
+        var response = await _azureStorageWrapper.UploadBlobAsync(command);
+
+        Assert.NotNull(response);
+        
+        Assert.True(response.Metadata.TryGetValue("xxx_xxx", out var _));
+        Assert.True(response.Metadata.TryGetValue("zzz_zzz", out var _));
 
         Assert.True(await PingAsync(response.SasUri));
     }

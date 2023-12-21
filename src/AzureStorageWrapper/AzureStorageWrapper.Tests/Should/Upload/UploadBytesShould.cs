@@ -2,7 +2,7 @@
 using AzureStorageWrapper.Exceptions;
 using Xunit;
 
-namespace AzureStorageWrapper.Tests.Should
+namespace AzureStorageWrapper.Tests.Should.Upload
 {
     public class UploadBytesShould : BaseShould
     {

@@ -1,7 +1,7 @@
 ﻿using AzureStorageWrapper.Commands;
 using Xunit;
 
-namespace AzureStorageWrapper.Tests.Should
+namespace AzureStorageWrapper.Tests.Should.Upload
 {
     public class UploadInVirtualFolderShould : BaseShould
     {
