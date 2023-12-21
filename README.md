@@ -199,6 +199,13 @@ The response when *downloading* file reference resembles the response when *uplo
     }
 }
 ```
+
+# Contributors / Collaborators
+
+These individuals have contributed to the repository through suggestions, error corrections, or by opening issues. Thanks 😊
+
+- [ginodcs](https://github.com/ginodcs)
+
 # Sponsor
 
 If you like the project, you can consider making a donation at [ko-fi.com](https://ko-fi.com/sergiobarriel)
