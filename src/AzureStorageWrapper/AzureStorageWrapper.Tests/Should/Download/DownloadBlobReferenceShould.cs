@@ -97,7 +97,7 @@ namespace AzureStorageWrapper.Tests.Should.Download
 
 
         [Theory]
-        [MemberData(nameof(WrongExpiresIn))]
+        [MemberData(nameof(InvalidExpiresIn))]
         public async Task DownloadBlobReference_WithWrongExpiration_Should_ReturnReference(int expiresIn)
         {
             var command = new DownloadBlobReference()
