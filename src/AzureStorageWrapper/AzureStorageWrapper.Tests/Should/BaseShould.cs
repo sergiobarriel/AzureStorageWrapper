@@ -13,13 +13,15 @@
 
             return response.IsSuccessStatusCode;
         }
-        public static IEnumerable<object[]> WrongMetadata() => new List<object[]>()
+
+
+        public static IEnumerable<object[]> InvalidMetadata() => new List<object[]>()
         {
             new object[] { new Dictionary<string, string>() },
             new object[] { null },
         };
-
-        public static IEnumerable<object[]> WrongExpiresIn() => new List<object[]>()
+        
+        public static IEnumerable<object[]> InvalidExpiresIn() => new List<object[]>()
         {
             new object[] { int.MinValue },
             new object[] { - 360 },
@@ -32,7 +34,7 @@
         /// order: container, fileName, fileExtension
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<object[]> WrongFileProperties() => new List<object[]>()
+        public static IEnumerable<object[]> InvalidFilePropertiesCombination() => new List<object[]>()
         {
             new object[] { "", "", "" },
             new object[] { "files", "", "" },

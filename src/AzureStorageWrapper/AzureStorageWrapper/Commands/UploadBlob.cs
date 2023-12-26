@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using AzureStorageWrapper.Exceptions;
 
 namespace AzureStorageWrapper.Commands
 {
@@ -23,5 +24,17 @@ namespace AzureStorageWrapper.Commands
         public bool UseVirtualFolder { get; set; }
 
         public abstract Stream GetContent();
+        
+        internal void Validate()
+        {
+            if (string.IsNullOrEmpty(Container))
+                throw new AzureStorageWrapperException($"{nameof(Container)} is empty!");
+
+            if (string.IsNullOrEmpty(Name))
+                throw new AzureStorageWrapperException($"{nameof(Name)} is empty!");
+
+            if (string.IsNullOrEmpty(Extension))
+                throw new AzureStorageWrapperException($"{nameof(Extension)} is empty!");
+        }
     }
 }

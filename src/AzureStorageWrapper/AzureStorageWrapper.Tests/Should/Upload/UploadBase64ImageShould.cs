@@ -2,7 +2,7 @@
 using AzureStorageWrapper.Tests.Sources;
 using Xunit;
 
-namespace AzureStorageWrapper.Tests.Should
+namespace AzureStorageWrapper.Tests.Should.Upload
 {
     public class UploadBase64ImageShould : BaseShould
     {
