@@ -2,7 +2,7 @@
 using AzureStorageWrapper.Exceptions;
 using Xunit;
 
-namespace AzureStorageWrapper.Tests.Should
+namespace AzureStorageWrapper.Tests.Should.Upload
 {
     public class UploadBytesShould : BaseShould
     {
@@ -35,7 +35,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
 
         [Theory]
-        [MemberData(nameof(WrongFileProperties))]
+        [MemberData(nameof(InvalidFilePropertiesCombination))]
         public async Task UploadBytesBlob_WithWrongFileProperties_Should_ThrowException(string container, string fileName, string fileExtension)
         {
             var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");
@@ -57,7 +57,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
 
         [Theory]
-        [MemberData(nameof(WrongMetadata))]
+        [MemberData(nameof(InvalidMetadata))]
         public async Task UploadBytesBlob_WithWrongMetadata_Should_UploadBlob(Dictionary<string, string> properties)
         {
             var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");

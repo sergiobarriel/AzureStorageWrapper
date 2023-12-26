@@ -3,7 +3,7 @@ using AzureStorageWrapper.Exceptions;
 using AzureStorageWrapper.Tests.Sources;
 using Xunit;
 
-namespace AzureStorageWrapper.Tests.Should
+namespace AzureStorageWrapper.Tests.Should.Download
 {
     public class DownloadBlobReferenceShould : BaseShould
     {
@@ -97,7 +97,7 @@ namespace AzureStorageWrapper.Tests.Should
 
 
         [Theory]
-        [MemberData(nameof(WrongExpiresIn))]
+        [MemberData(nameof(InvalidExpiresIn))]
         public async Task DownloadBlobReference_WithWrongExpiration_Should_ReturnReference(int expiresIn)
         {
             var command = new DownloadBlobReference()
