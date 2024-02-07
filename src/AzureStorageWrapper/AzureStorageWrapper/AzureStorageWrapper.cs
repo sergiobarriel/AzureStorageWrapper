@@ -188,7 +188,7 @@ namespace AzureStorageWrapper
             var name = _uriService.GetFileName(unescapedUriRepresentation);
             var extension = _uriService.GetFileExtension(unescapedUriRepresentation);
             
-            return (name: name, extension: extension);
+            return (name: name, extension: extension); 
         }
         
         private static Dictionary<string, string> SanitizeDictionary(Dictionary<string, string> metadata)
