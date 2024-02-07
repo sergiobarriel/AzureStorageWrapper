@@ -24,13 +24,20 @@ namespace AzureStorageWrapper
         public string GetFileName(string uri)
         {
             var uriObject = new Uri(uri);
-
+            
+            var host = GetHost(uri);
             var container = GetContainer(uri);
             var extension = GetFileExtension(uri);
 
-            return uriObject.LocalPath.Replace($"/{container}/", string.Empty).Replace($".{extension}", string.Empty);
-            
-            // return Path.GetFileNameWithoutExtension(uriObject.LocalPath);
+            var remainder = uriObject.LocalPath
+                .Replace($"{host}", string.Empty)
+                .Replace($"/{container}/", string.Empty);
+
+            var index = remainder.LastIndexOf($".{extension}", StringComparison.Ordinal);
+
+            var fileName = remainder.Substring(0, index);
+
+            return fileName;
         }
         
         public string GetFileExtension(string uri)

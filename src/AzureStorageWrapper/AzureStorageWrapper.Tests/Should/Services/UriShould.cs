@@ -10,6 +10,11 @@ namespace AzureStorageWrapper.Tests.Should
         private string UriWithMultipleVirtualFolder = $"https://accountname.blob.core.windows.net/container/multiple/virtual/folder/file.extension";
         private string UriWithoutVirtualFolder = $"https://accountname.blob.core.windows.net/container/file.extension";
         
+        private string UriWithTwoExtensions = $"https://accountname.blob.core.windows.net/container/file.extension.extension";
+        private string UriWithVirtualFolderWithTwoExtensions = $"https://accountname.blob.core.windows.net/container/virtual/folder/file.extension.extension";
+        private string UriWithManyExtensions = $"https://accountname.blob.core.windows.net/container/file.extension.extension.extension";
+        private string UriWithVirtualFolderWithManyExtensions = $"https://accountname.blob.core.windows.net/container/virtual/folder/file.extension.extension.extension";
+        
         public UriShould()
         {
             _uriService = new UriService();
@@ -41,7 +46,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
     
         [Fact]
-        public void GetContainer_WithVirtualFolder_ShouldReturnHost()
+        public void GetContainer_WithVirtualFolder_ShouldReturnContainer()
         {
             var container = _uriService.GetContainer(UriWithVirtualFolder);
         
@@ -49,7 +54,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
     
         [Fact]
-        public void GetContainer_WithoutVirtualFolder_ShouldReturnHost()
+        public void GetContainer_WithoutVirtualFolder_ShouldReturnContainer()
         {
             var container = _uriService.GetContainer(UriWithoutVirtualFolder);
         
@@ -57,7 +62,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
     
         [Fact]
-        public void GetContainer_WithMultipleVirtualFolder_ShouldReturnHost()
+        public void GetContainer_WithMultipleVirtualFolder_ShouldReturnContainer()
         {
             var container = _uriService.GetContainer(UriWithMultipleVirtualFolder);
         
@@ -65,15 +70,16 @@ namespace AzureStorageWrapper.Tests.Should
         }
         
         [Fact]
-        public void GetFileName_WithVirtualFolder_ShouldReturnHost()
+        public void GetFileName_WithVirtualFolder_ShouldReturnFileName()
         {
             var fileName = _uriService.GetFileName(UriWithVirtualFolder);
         
             Assert.Equal("virtualFolder/file", fileName);
         }
-    
+        
+       
         [Fact]
-        public void GetFileName_WithoutVirtualFolder_ShouldReturnHost()
+        public void GetFileName_WithoutVirtualFolder_ShouldReturnFileName()
         {
             var fileName = _uriService.GetFileName(UriWithoutVirtualFolder);
         
@@ -81,7 +87,39 @@ namespace AzureStorageWrapper.Tests.Should
         }
     
         [Fact]
-        public void GetFileName_WithMultipleVirtualFolder_ShouldReturnHost()
+        public void GetFileName_WithTwoExtension_ShouldReturnFileName()
+        {
+            var fileName = _uriService.GetFileName(UriWithTwoExtensions);
+        
+            Assert.Equal("file.extension", fileName);
+        }
+        
+        [Fact]
+        public void GetFileName_WithVirtualFolder_WithTwoExtension_ShouldReturnFileName()
+        {
+            var fileName = _uriService.GetFileName(UriWithVirtualFolderWithTwoExtensions);
+        
+            Assert.Equal("virtual/folder/file.extension", fileName);
+        }
+        
+        [Fact]
+        public void GetFileName_WithManyExtension_ShouldReturnFileName()
+        {
+            var fileName = _uriService.GetFileName(UriWithManyExtensions);
+        
+            Assert.Equal("file.extension.extension", fileName);
+        }     
+        
+        [Fact]
+        public void GetFileName_WithVirtualFolder_WithManyExtension_ShouldReturnFileName()
+        {
+            var fileName = _uriService.GetFileName(UriWithVirtualFolderWithManyExtensions);
+        
+            Assert.Equal("virtual/folder/file.extension.extension", fileName);
+        }        
+
+        [Fact]
+        public void GetFileName_WithMultipleVirtualFolder_ShouldReturnFileName()
         {
             var fileName = _uriService.GetFileName(UriWithMultipleVirtualFolder);
         
@@ -89,7 +127,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
         
         [Fact]
-        public void GetFileExtension_WithVirtualFolder_ShouldReturnHost()
+        public void GetFileExtension_WithVirtualFolder_ShouldReturnFileExtension()
         {
             var fileExtension = _uriService.GetFileExtension(UriWithVirtualFolder);
         
@@ -97,7 +135,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
     
         [Fact]
-        public void GetFileExtension_WithoutVirtualFolder_ShouldReturnHost()
+        public void GetFileExtension_WithoutVirtualFolder_ShouldReturnFileExtension()
         {
             var fileExtension = _uriService.GetFileExtension(UriWithoutVirtualFolder);
         
@@ -105,7 +143,7 @@ namespace AzureStorageWrapper.Tests.Should
         }
         
         [Fact]
-        public void GetFileExtension_WithMultipleVirtualFolder_ShouldReturnHost()
+        public void GetFileExtension_WithMultipleVirtualFolder_ShouldReturnFileExtension()
         {
             var fileExtension = _uriService.GetFileExtension(UriWithMultipleVirtualFolder);
         
