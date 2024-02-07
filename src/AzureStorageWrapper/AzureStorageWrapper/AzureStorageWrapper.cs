@@ -185,16 +185,10 @@ namespace AzureStorageWrapper
         {
             var unescapedUriRepresentation = Uri.UnescapeDataString(uri);
 
-            var container = _uriService.GetContainer(unescapedUriRepresentation);
-            var host = _uriService.GetHost(unescapedUriRepresentation);
+            var name = _uriService.GetFileName(unescapedUriRepresentation);
             var extension = _uriService.GetFileExtension(unescapedUriRepresentation);
-
-            var temp = unescapedUriRepresentation
-                .Replace($"{host}/", string.Empty)
-                .Replace($"{container}/", string.Empty)
-                .Replace($".{extension}", string.Empty);
             
-            return (name: temp, extension: extension);
+            return (name: name, extension: extension);
         }
         
         private static Dictionary<string, string> SanitizeDictionary(Dictionary<string, string> metadata)
