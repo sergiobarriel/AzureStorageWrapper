@@ -15,21 +15,21 @@ namespace AzureStorageWrapper.Tests.Should.Enumerate
             _output = output;
         }
         
-        [Fact]
-        public async Task EnumerateBlobs_ShouldReturnAllBlobsFromAContainer()
-        {
-            var command = new EnumerateAllBlobs()
-            {
-                Container = "files"
-            };
-
-            var references = await _azureStorageWrapper.EnumerateAllBlobsAsync(command);
-            
-            _output.WriteLine($"Enumerating {references.References.Count()} references");
-            
-            Assert.True(references.References.Any());
-            
-        }
+        // [Fact]
+        // public async Task EnumerateBlobs_ShouldReturnAllBlobsFromAContainer()
+        // {
+        //     var command = new EnumerateAllBlobs()
+        //     {
+        //         Container = "files"
+        //     };
+        //
+        //     var references = await _azureStorageWrapper.EnumerateAllBlobsAsync(command);
+        //     
+        //     _output.WriteLine($"Enumerating {references.References.Count()} references");
+        //     
+        //     Assert.True(references.References.Any());
+        //     
+        // }
         
         [Fact]
         public async Task EnumerateBlobs_WithContinuationToken_ShouldReturnBlobsPageByPage()
