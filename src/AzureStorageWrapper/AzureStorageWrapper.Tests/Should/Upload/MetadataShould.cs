@@ -1,19 +1,19 @@
 using AzureStorageWrapper.Commands;
 using Xunit;
 
-namespace AzureStorageWrapper.Tests.Should.Upload;
-
-public class MetadataShould : BaseShould
+namespace AzureStorageWrapper.Tests.Should.Upload
 {
-    private readonly IAzureStorageWrapper _azureStorageWrapper;
+    public class MetadataShould : BaseShould
+    {
+        private readonly IAzureStorageWrapper _azureStorageWrapper;
 
-    public MetadataShould(IAzureStorageWrapper azureStorageWrapper)
+        public MetadataShould(IAzureStorageWrapper azureStorageWrapper)
     {
         _azureStorageWrapper = azureStorageWrapper;
     }
         
-    [Fact]
-    public async Task UploadBlob_WithMetadataDiacriticsKey_Should_UploadBlob()
+        [Fact]
+        public async Task UploadBlob_WithMetadataDiacriticsKey_Should_UploadBlob()
     {
         var base64 = "SGVsbG8g8J+Zgg==";
         var diacriticsOne = "áéíóú";
@@ -42,8 +42,8 @@ public class MetadataShould : BaseShould
         Assert.True(await PingAsync(response.SasUri));
     }
         
-    [Fact]
-    public async Task UploadBlob_WithDiacriticsMetadataValue_Should_UploadBlob()
+        [Fact]
+        public async Task UploadBlob_WithDiacriticsMetadataValue_Should_UploadBlob()
     {
         var base64 = "SGVsbG8g8J+Zgg==";
         var diacriticsOne = "áéíóú";
@@ -73,8 +73,8 @@ public class MetadataShould : BaseShould
     }
     
     
-    [Fact]
-    public async Task UploadBlob_WithBlankSpaceMetadataKey_Should_UploadBlob()
+        [Fact]
+        public async Task UploadBlob_WithBlankSpaceMetadataKey_Should_UploadBlob()
     {
         var base64 = "SGVsbG8g8J+Zgg==";
 
@@ -99,5 +99,6 @@ public class MetadataShould : BaseShould
         Assert.True(response.Metadata.TryGetValue("zzz_zzz", out var _));
 
         Assert.True(await PingAsync(response.SasUri));
+    }
     }
 }

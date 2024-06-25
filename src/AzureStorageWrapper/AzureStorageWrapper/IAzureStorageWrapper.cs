@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Responses;
 
@@ -33,5 +34,18 @@ namespace AzureStorageWrapper
         /// <param name="command"></param>
         /// <returns></returns>
         Task DeleteBlobAsync(DeleteBlob command);
+
+        /// <summary>
+        /// Enumerate and paginate blobs inside an Azure Storage container
+        /// </summary>
+        /// <returns></returns>
+        Task<BlobReferenceCollection> EnumerateBlobsAsync(EnumerateBlobs command);
+
+        /// <summary>
+        /// Enumerate all blobs inside an Azure Storage container
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        Task<BlobReferenceCollection> EnumerateAllBlobsAsync(EnumerateAllBlobs command);
     }
 }
