@@ -200,12 +200,75 @@ The response when *downloading* file reference resembles the response when *uplo
 }
 ```
 
+## Delete blobs
+
+You can delete a blob by specifying the *Uri*.
+
+```csharp
+var command = new DeleteBlob()
+{
+    Uri = "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md"
+};
+
+await _azureStorageWrapper.DeleteBlobAsync(command);
+```
+
+## Enumerate blobs
+
+You can list all blobs in a container by using the method `EnumerateAllBlobsAsync` or paginate the results by using `EnumerateBlobsAsync` method. The second one requires the `Size` property to be set. 
+
+In both cases, the response `BlobReferenceCollection` will contain a collection of `BlobReference` elements.
+
+### Without pagination
+
+```csharp
+var command = new EnumerateAllBlobs()
+{
+    Container = "files"
+};
+
+var response = await _azureStorageWrapper.EnumerateAllBlobsAsync(command);
+
+
+```
+### With pagination
+
+```csharp
+var command = new EnumerateBlobs()
+{
+    Container = "files"
+    Size = 10,
+};
+
+var response = await _azureStorageWrapper.EnumerateBlobsAsync(command);
+
+```
+Then you can request additional pages by using the `ContinuationToken` property in the next request.
+
+```csharp
+var firstCommand = new EnumerateBlobs()
+{
+    Container = "files"
+    Size = 10,
+};
+
+var firstResponse = await _azureStorageWrapper.EnumerateBlobsAsync(firstCommand);
+
+var secondCommand = new EnumerateBlobs()
+{
+    Container = "files"
+    Size = 10,
+    ContinuationToken = firstResponse.ContinuationToken
+};
+
+var secondResponse = await _azureStorageWrapper.EnumerateBlobsAsync(secondCommand);
+```
+
 # Contributors / Collaborators
 
 These individuals have contributed to the repository through suggestions, error corrections, or by opening issues. Thanks 😊
 
 - [ginodcs](https://github.com/ginodcs)
-- [joseantoniolopez](https://github.com/joseantoniolopez)
 
 # Sponsor
 

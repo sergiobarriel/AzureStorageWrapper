@@ -121,6 +121,66 @@ namespace AzureStorageWrapper
 
             await blobClient.DeleteIfExistsAsync();
         }
+        
+        public async Task<BlobReferenceCollection> EnumerateBlobsAsync(EnumerateBlobs command)
+        {
+            var container = GetContainer(command.Container);
+
+            var segment = container.GetBlobsAsync().AsPages(command.ContinuationToken, command.Size);
+
+            var references = new List<BlobReference>();
+            
+            await foreach (var page in segment)
+            {
+                foreach (var item in page.Values)
+                {
+                    var blobReference = await DownloadBlobReferenceAsync(new DownloadBlobReference()
+                    {
+                        Uri = $"{container.Uri}/{item.Name}",
+                        ExpiresIn = _configuration.DefaultSasUriExpiration
+                    });
+                    
+                    references.Add(blobReference);
+                }
+                
+                return new BlobReferenceCollection()
+                {
+                    References = references,
+                    ContinuationToken = page.ContinuationToken
+                };
+            }
+
+            return null;
+        }
+        
+        public async Task<BlobReferenceCollection> EnumerateAllBlobsAsync(EnumerateAllBlobs command)
+        {
+            var container = GetContainer(command.Container);
+
+            var segment = container.GetBlobsAsync().AsPages(null, 10);
+
+            var references = new List<BlobReference>();
+            
+            await foreach (var page in segment)
+            {
+                foreach (var item in page.Values)
+                {
+                    var blobReference = await DownloadBlobReferenceAsync(new DownloadBlobReference()
+                    {
+                        Uri = $"{container.Uri}/{item.Name}",
+                        ExpiresIn = _configuration.DefaultSasUriExpiration
+                    });
+                    
+                    references.Add(blobReference);
+                }
+            }
+
+            return new BlobReferenceCollection()
+            {
+                References = references,
+                ContinuationToken = null
+            };
+        }
 
         private BlobContainerClient GetContainer(string containerName)
         {
