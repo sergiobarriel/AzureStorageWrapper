@@ -15,9 +15,15 @@ namespace AzureStorageWrapper.Commands
 
             RemoveBase64Header();
 
-            var bytes = Convert.FromBase64String(Base64);
-
-            return new MemoryStream(bytes);
+            try
+            {
+                var bytes = Convert.FromBase64String(Base64);
+                return new MemoryStream(bytes);
+            }
+            catch (Exception _)
+            {
+                throw new AzureStorageWrapperException("Invalid base64 string");
+            }
         }
 
         /// <summary>
@@ -27,7 +33,7 @@ namespace AzureStorageWrapper.Commands
         /// </summary>
         private void RemoveBase64Header()
         {
-            var regex = new Regex(@"^data:image\/[a-zA-Z]+;base64,");
+            var regex = new Regex(@"^data:[^;]+;base64,");
 
             Base64 = regex.Replace(Base64, string.Empty);
         }

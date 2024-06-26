@@ -269,6 +269,7 @@ var secondResponse = await _azureStorageWrapper.EnumerateBlobsAsync(secondComman
 These individuals have contributed to the repository through suggestions, error corrections, or by opening issues. Thanks 😊
 
 - [ginodcs](https://github.com/ginodcs)
+- [christian-cell](https://github.com/christian-cell)
 
 # Sponsor
 
