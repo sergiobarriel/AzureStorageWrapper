@@ -124,6 +124,8 @@ namespace AzureStorageWrapper
         
         public async Task<BlobReferenceCollection> EnumerateBlobsAsync(EnumerateBlobs command)
         {
+            command.Validate();
+            
             var container = GetContainer(command.Container);
 
             var segment = container.GetBlobsAsync().AsPages(command.ContinuationToken, command.Size);
@@ -155,6 +157,8 @@ namespace AzureStorageWrapper
         
         public async Task<BlobReferenceCollection> EnumerateAllBlobsAsync(EnumerateAllBlobs command)
         {
+            command.Validate();
+            
             var container = GetContainer(command.Container);
 
             var segment = container.GetBlobsAsync().AsPages(null, 10);
