@@ -38,9 +38,13 @@ namespace AzureStorageWrapper
 
             await blobClient.UploadAsync(command.GetContent(), overwrite: true);
 
-            command.Metadata ??= new Dictionary<string, string>();
-            command.Metadata.TryAdd("_timestamp", $"{DateTime.UtcNow}");
+            if (command.Metadata is null)
+            {
+                command.Metadata = new Dictionary<string, string>();
+            }
 
+            command.Metadata["_timestamp"] = $"{DateTime.UtcNow}";
+            
             var sanitizedDictionary = SanitizeDictionary(command.Metadata);
             
             await blobClient.SetMetadataAsync(sanitizedDictionary);
@@ -129,11 +133,14 @@ namespace AzureStorageWrapper
             var container = GetContainer(command.Container);
 
             var segment = container.GetBlobsAsync().AsPages(command.ContinuationToken, command.Size);
-
+            var enumerator = segment.GetAsyncEnumerator();
+            
             var references = new List<BlobReference>();
             
-            await foreach (var page in segment)
+            while (await enumerator.MoveNextAsync())
             {
+                var page = enumerator.Current;
+
                 foreach (var item in page.Values)
                 {
                     var blobReference = await DownloadBlobReferenceAsync(new DownloadBlobReference()
@@ -141,10 +148,12 @@ namespace AzureStorageWrapper
                         Uri = $"{container.Uri}/{item.Name}",
                         ExpiresIn = _configuration.DefaultSasUriExpiration
                     });
-                    
+
                     references.Add(blobReference);
                 }
                 
+                await enumerator.DisposeAsync();
+
                 return new BlobReferenceCollection()
                 {
                     References = references,
@@ -162,11 +171,14 @@ namespace AzureStorageWrapper
             var container = GetContainer(command.Container);
 
             var segment = container.GetBlobsAsync().AsPages(null, 10);
-
+            var enumerator = segment.GetAsyncEnumerator();
+            
             var references = new List<BlobReference>();
             
-            await foreach (var page in segment)
+            while (await enumerator.MoveNextAsync())
             {
+                var page = enumerator.Current;
+
                 foreach (var item in page.Values)
                 {
                     var blobReference = await DownloadBlobReferenceAsync(new DownloadBlobReference()
@@ -174,16 +186,20 @@ namespace AzureStorageWrapper
                         Uri = $"{container.Uri}/{item.Name}",
                         ExpiresIn = _configuration.DefaultSasUriExpiration
                     });
-                    
+
                     references.Add(blobReference);
                 }
+                
+                await enumerator.DisposeAsync();
+
+                return new BlobReferenceCollection()
+                {
+                    References = references,
+                    ContinuationToken = page.ContinuationToken
+                };
             }
 
-            return new BlobReferenceCollection()
-            {
-                References = references,
-                ContinuationToken = null
-            };
+            return null;
         }
 
         private BlobContainerClient GetContainer(string containerName)
@@ -207,25 +223,27 @@ namespace AzureStorageWrapper
         public async Task<Blob> DownloadBlobAsync(DownloadBlob command)
         {
             command.Validate();
-            
-            using var httpClient = new HttpClient();
-            
-            var response = await httpClient.GetAsync(command.Uri);
 
-            if (!response.IsSuccessStatusCode)
+            using (var httpClient = new HttpClient())
             {
-                var fileName = _uriService.GetFileName(command.Uri);
-                var fileExtension = _uriService.GetFileExtension(command.Uri);
+                var response = await httpClient.GetAsync(command.Uri);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var fileName = _uriService.GetFileName(command.Uri);
+                    var fileExtension = _uriService.GetFileExtension(command.Uri);
+
+                    throw new AzureStorageWrapperException(
+                        $"something went wrong when downloading blob {fileName}.{fileExtension}: {response.ReasonPhrase}");
+                }
+
+                var stream = await response.Content.ReadAsStreamAsync();
                 
-                throw new AzureStorageWrapperException($"something went wrong when downloading blob {fileName}.{fileExtension}: {response.ReasonPhrase}");
+                return new Blob()
+                {
+                    Stream = stream
+                };
             }
-            
-            var stream = await response.Content.ReadAsStreamAsync();
-
-            return new Blob()
-            {
-                Stream = stream
-            };
         }
 
         private async Task<string> GetSasUriAsync(GetSasUri command)
@@ -259,7 +277,7 @@ namespace AzureStorageWrapper
         {
             return metadata.ToDictionary(item => SanitizeKey(item.Key), item => SanitizeValue(item.Value));
 
-            static string SanitizeKey(string key)
+            string SanitizeKey(string key)
             {
                 key = RemoveDiacritics(key);
                 
@@ -268,14 +286,14 @@ namespace AzureStorageWrapper
                 return key;
             }
             
-            static string SanitizeValue(string @value)
+            string SanitizeValue(string @value)
             {
                 value = RemoveDiacritics(value);
 
                 return value;
             }
             
-            static string RemoveDiacritics(string fileName)
+            string RemoveDiacritics(string fileName)
             {
                 var normalizedString = fileName.Normalize(NormalizationForm.FormD);
             

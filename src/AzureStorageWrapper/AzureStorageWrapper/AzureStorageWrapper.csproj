@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.1</TargetFramework>
-		<Nullable>enable</Nullable>
+		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
 		<version>2.3.1</version>
 		<Title>AzureStorageWrapper</Title>
 		<Authors>Sergio Barriel</Authors>
