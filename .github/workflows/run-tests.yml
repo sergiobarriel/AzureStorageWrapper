@@ -19,9 +19,8 @@ jobs:
           - 10000:10000
           - 10001:10001
           - 10002:10002
-        options: > 
-          --network-alias azurite 
-          -l /data -s -d
+        options: --network-alias azurite
+        command: azurite -l /data -s -d
 
     steps:
       - uses: actions/checkout@v3
