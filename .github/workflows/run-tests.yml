@@ -11,6 +11,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    services:
+      azurite:
+        image: mcr.microsoft.com/azure-storage/azurite
+        ports:
+          - 10000:10000
+          - 10001:10001
+          - 10002:10002
+        options: > 
+          --network-alias azurite 
+          azurite -l /data -s -d    
+
     steps:
       - uses: actions/checkout@v3
 
