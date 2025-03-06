@@ -153,7 +153,7 @@ The upload commands have a property called `UseVirtualFolder` which by default h
 
 **Be careful.** If you make that change, the files will NOT be saved in virtual directories, and file names may collide, causing files to be overwritten.
 
-In this case, you must be responsible for establishing your own mechanism to generate unique file names.
+> In this case, you must be responsible for establishing your own mechanism to generate unique file names.
 
 ```csharp
 var base64 = "SGVsbG8g8J+Zgg==";
@@ -170,7 +170,7 @@ var command = new UploadBase64()
 var response = await _azureStorageWrapper.UploadBlobAsync(command);
 ```
 
-## Download blobs
+## Download blob references
 
 To download a blob reference, you need specify the *Uri*.
 
@@ -270,6 +270,7 @@ These individuals have contributed to the repository through suggestions, error 
 
 - [ginodcs](https://github.com/ginodcs)
 - [christian-cell](https://github.com/christian-cell)
+- [scabrera](https://github.com/scabrera)
 
 # Sponsor
 

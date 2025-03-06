@@ -3,7 +3,7 @@ using AzureStorageWrapper.Exceptions;
 
 namespace AzureStorageWrapper.Commands
 {
-    public class GetSasUri
+    internal class GetSasUri
     {
         public string Uri { get; set; }
         public int ExpiresIn { get; set; }

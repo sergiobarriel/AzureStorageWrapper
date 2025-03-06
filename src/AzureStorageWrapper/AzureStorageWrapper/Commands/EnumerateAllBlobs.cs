@@ -10,7 +10,6 @@ namespace AzureStorageWrapper.Commands
         {
             if (string.IsNullOrEmpty(Container))
                 throw new AzureStorageWrapperException($"{nameof(Container)} is empty!");
-            
         }
     }
 }
