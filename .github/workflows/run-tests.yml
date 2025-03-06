@@ -21,7 +21,7 @@ jobs:
           - 10002:10002
         options: > 
           --network-alias azurite 
-          azurite -l /data -s -d    
+          -l /data -s -d
 
     steps:
       - uses: actions/checkout@v3
@@ -34,11 +34,6 @@ jobs:
       - name: '🧱 dotnet build'
         run: dotnet build
         working-directory: './src/AzureStorageWrapper/AzureStorageWrapper'
-
-      - name: '💾 azurite'
-        run: |
-          npm install -g azurite
-          azurite --location c:\azurite --debug c:\azurite\debug.log
 
       - name: '🚨 dotnet test'
         run: dotnet test --environment AZURE_STORAGE_CONNECTION_STRING="${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}"
