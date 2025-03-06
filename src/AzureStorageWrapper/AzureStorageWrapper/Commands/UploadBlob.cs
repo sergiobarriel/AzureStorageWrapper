@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using AzureStorageWrapper.Exceptions;
 
@@ -8,7 +9,7 @@ namespace AzureStorageWrapper.Commands
     {
         protected UploadBlob()
         {
-            Metadata = new Dictionary<string, string>();
+            Metadata["_timestamp"] = $"{DateTime.UtcNow}";
             UseVirtualFolder = true;
         }
 
@@ -16,7 +17,7 @@ namespace AzureStorageWrapper.Commands
         public string Extension { get; set; }
         public string Container { get; set; }
         
-        public Dictionary<string, string> Metadata { get; set; }
+        public Dictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
 
         /// <summary>
         /// If you set this property to 'false' the files will NOT be saved in virtual directories, and file names may collide, causing files to be overwritten

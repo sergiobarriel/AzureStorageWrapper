@@ -11,18 +11,27 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v3
 
       - name: '⚙️ Setup .NET Core'
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '7.0.x'
+          dotnet-version: '8.0.x'
 
       - name: '🧱 dotnet build'
         run: dotnet build
         working-directory: './src/AzureStorageWrapper/AzureStorageWrapper'
-        
+
+      - name: '💾 azurite'
+        run: |
+          npm install -g azurite
+          mkdir -p azurite
+          azurite --location ./azurite --debug ./azurite/debug.log &
+
       - name: '🚨 dotnet test'
         run: dotnet test --environment AZURE_STORAGE_CONNECTION_STRING="${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}"
         working-directory: './src/AzureStorageWrapper/AzureStorageWrapper.Tests'
+
+
