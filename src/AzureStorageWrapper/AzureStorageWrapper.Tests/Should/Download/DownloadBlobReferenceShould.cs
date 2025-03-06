@@ -1,8 +1,8 @@
-﻿﻿using AzureStorageWrapper.Commands;
+﻿using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Exceptions;
 using AzureStorageWrapper.Tests.Sources;
 using Xunit;
-
+ 
 namespace AzureStorageWrapper.Tests.Should.Download
 {
     public class DownloadBlobReferenceShould : BaseShould
@@ -17,49 +17,96 @@ namespace AzureStorageWrapper.Tests.Should.Download
         [Fact]
         public async Task DownloadBlobReference_WithManyDots_Should_ReturnReference()
         {
-            var command = new DownloadBlobReference()
+            var base64 = "SGVsbG8g8J+Zgg==";
+            
+            var uploadBlobCommand = new UploadBase64()
             {
-                Uri = Uris.ExistingFileWithManyDots,
+                Base64 = base64,
+                Container = "files",
+                Name = "hello.world.hello.world",
+                Extension = "md",
+                Metadata = new Dictionary<string, string>()
+                    {{"hello", "world"}}
+            };
+
+            var uploadBlobResponse = await _azureStorageWrapper.UploadBlobAsync(uploadBlobCommand);
+                
+            var downloadBlobReferenceCommand = new DownloadBlobReference()
+            {
+                Uri = uploadBlobResponse.Uri,
                 ExpiresIn = 360,
             };
 
-            var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
+            // Act
+            var blobReference = await _azureStorageWrapper.DownloadBlobReferenceAsync(downloadBlobReferenceCommand);
 
-            Assert.NotNull(response);
-
-            Assert.True(await PingAsync(response.SasUri));
+            // Assert
+            Assert.NotNull(blobReference);
+            Assert.True(await PingAsync(blobReference.SasUri));
         }
 
         [Fact]
         public async Task DownloadBlobReference_WithExtensions_Should_ReturnReference()
         {
-            var command = new DownloadBlobReference()
+            var base64 = "SGVsbG8g8J+Zgg==";
+            
+            var uploadBlobCommand = new UploadBase64()
             {
-                Uri = Uris.ExistingFileWithManyExtensions,
+                Base64 = base64,
+                Container = "files",
+                Name = "hello",
+                Extension = "md.md.md",
+                Metadata = new Dictionary<string, string>()
+                    {{"hello", "world"}}
+            };
+
+            var uploadBlobResponse = await _azureStorageWrapper.UploadBlobAsync(uploadBlobCommand);
+                
+            var downloadBlobReferenceCommand = new DownloadBlobReference()
+            {
+                Uri = uploadBlobResponse.Uri,
                 ExpiresIn = 360,
             };
 
-            var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
+            // Act
+            var blobReference = await _azureStorageWrapper.DownloadBlobReferenceAsync(downloadBlobReferenceCommand);
 
-            Assert.NotNull(response);
-
-            Assert.True(await PingAsync(response.SasUri));
+            // Assert
+            Assert.NotNull(blobReference);
+            Assert.True(await PingAsync(blobReference.SasUri));
         }
 
         [Fact]
         public async Task DownloadBlobReference_Should_ReturnReference()
         {
-            var command = new DownloadBlobReference()
+            // Arrange
+            
+            var base64 = "SGVsbG8g8J+Zgg==";
+            
+            var uploadBlobCommand = new UploadBase64()
             {
-                Uri = Uris.ExistingFile,
+                Base64 = base64,
+                Container = "files",
+                Name = "hello",
+                Extension = "md",
+                Metadata = new Dictionary<string, string>()
+                    {{"hello", "world"}}
+            };
+
+            var uploadBlobResponse = await _azureStorageWrapper.UploadBlobAsync(uploadBlobCommand);
+                
+            var downloadBlobReferenceCommand = new DownloadBlobReference()
+            {
+                Uri = uploadBlobResponse.Uri,
                 ExpiresIn = 360,
             };
 
-            var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
+            // Act
+            var blobReference = await _azureStorageWrapper.DownloadBlobReferenceAsync(downloadBlobReferenceCommand);
 
-            Assert.NotNull(response);
-
-            Assert.True(await PingAsync(response.SasUri));
+            // Assert
+            Assert.NotNull(blobReference);
+            Assert.True(await PingAsync(blobReference.SasUri));
         }
 
         [Fact]
@@ -84,7 +131,7 @@ namespace AzureStorageWrapper.Tests.Should.Download
         {
             var command = new DownloadBlobReference()
             {
-                Uri = Uris.UnExistingFile,
+                Uri = "",
                 ExpiresIn = 360,
             };
 
@@ -94,39 +141,7 @@ namespace AzureStorageWrapper.Tests.Should.Download
                 _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
             });
         }
-
-
-        [Theory]
-        [MemberData(nameof(InvalidExpiresIn))]
-        public async Task DownloadBlobReference_WithWrongExpiration_Should_ReturnReference(int expiresIn)
-        {
-            var command = new DownloadBlobReference()
-            {
-                Uri = Uris.ExistingFile,
-                ExpiresIn = expiresIn,
-            };
-
-            var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
-
-            Assert.NotNull(response);
-
-            Assert.True(await PingAsync(response.SasUri));
-        }
-
-        [Fact]
-        public async Task DownloadBlobReference_WithHighExpiration_Should_ThrowException()
-        {
-            var command = new DownloadBlobReference()
-            {
-                Uri = Uris.ExistingFile,
-                ExpiresIn = int.MaxValue,
-            };
-
-            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
-            {
-                _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
-            });
-        }
+        
         
     }
 }

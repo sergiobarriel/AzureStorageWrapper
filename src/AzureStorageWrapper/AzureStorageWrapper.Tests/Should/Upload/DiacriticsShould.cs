@@ -3,16 +3,15 @@ using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should.Upload
 {
-    public class UploadBlobWithNameVariations : BaseShould
+    public class DiacriticsShould : BaseShould
     {
         private readonly IAzureStorageWrapper _azureStorageWrapper;
 
-        public UploadBlobWithNameVariations(IAzureStorageWrapper azureStorageWrapper)
+        public DiacriticsShould(IAzureStorageWrapper azureStorageWrapper)
         {
             _azureStorageWrapper = azureStorageWrapper;
         }
-
-     
+        
 
         [Fact]
         public async Task UploadBlobWithDiacriticsInName_Should_UploadBlob()

@@ -13,7 +13,9 @@ namespace AzureStorageWrapper.Commands
         {
             if (string.IsNullOrEmpty(Base64)) throw new AzureStorageWrapperException($"{nameof(Base64)} is empty");
 
-            RemoveBase64Header();
+            var regex = new Regex(@"^data:[^;]+;base64,");
+
+            Base64 = regex.Replace(Base64, string.Empty);
 
             try
             {
@@ -24,18 +26,6 @@ namespace AzureStorageWrapper.Commands
             {
                 throw new AzureStorageWrapperException("Invalid base64 string");
             }
-        }
-
-        /// <summary>
-        /// Remove starting tags from base64 like:
-        /// data:image/png;base64,...
-        /// data:application/pdf;base64,...
-        /// </summary>
-        private void RemoveBase64Header()
-        {
-            var regex = new Regex(@"^data:[^;]+;base64,");
-
-            Base64 = regex.Replace(Base64, string.Empty);
         }
     }
 }

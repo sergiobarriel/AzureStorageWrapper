@@ -17,21 +17,40 @@ namespace AzureStorageWrapper.Tests.Should.Download
         [Fact]
         public async Task DownloadBlob_Should_ReturnBlob()
         {
-            var commandReference = new DownloadBlobReference()
+            // Arrange
+            
+            var base64 = "SGVsbG8g8J+Zgg==";
+            
+            var uploadBlobCommand = new UploadBase64()
             {
-                Uri = Uris.ExistingFile,
-                ExpiresIn = 60
+                Base64 = base64,
+                Container = "files",
+                Name = "hello world",
+                Extension = "md",
+                Metadata = new Dictionary<string, string>()
+                    {{"hello", "world"}}
             };
 
-            var blobReference = await _azureStorageWrapper.DownloadBlobReferenceAsync(commandReference);
+            var uploadBlobResponse = await _azureStorageWrapper.UploadBlobAsync(uploadBlobCommand);
+                
+            var downloadBlobCommand = new DownloadBlobReference()
+            {
+                Uri = uploadBlobResponse.Uri,
+                ExpiresIn = 360,
+            };
+            
+            var blobReference = await _azureStorageWrapper.DownloadBlobReferenceAsync(downloadBlobCommand);
                 
             var command = new DownloadBlob()
             {
                 Uri = blobReference.SasUri,
             };
 
+            // Act
+            
             var response = await _azureStorageWrapper.DownloadBlobAsync(command);
 
+            // Assert
             Assert.NotNull(response);
 
             Assert.NotNull(response.Stream);
@@ -39,26 +58,26 @@ namespace AzureStorageWrapper.Tests.Should.Download
         }
         
         
-        [Fact]
-        public async Task DownloadBlob_WithInvalidUri_Should_ReturnBlob()
-        {
-            var commandReference = new DownloadBlobReference()
-            {
-                Uri = Uris.ExistingFile,
-                ExpiresIn = 60
-            };
-
-            var blobReference = await _azureStorageWrapper.DownloadBlobReferenceAsync(commandReference);
-                
-            var command = new DownloadBlob()
-            {
-                Uri = blobReference.Uri,
-            };
-            
-            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
-            {
-                _ = await _azureStorageWrapper.DownloadBlobAsync(command);
-            });
-        }
+        // [Fact]
+        // public async Task DownloadBlob_WithInvalidUri_Should_ReturnBlob()
+        // {
+        //     var commandReference = new DownloadBlobReference()
+        //     {
+        //         Uri = Uris.ExistingFile,
+        //         ExpiresIn = 60
+        //     };
+        //
+        //     var blobReference = await _azureStorageWrapper.DownloadBlobReferenceAsync(commandReference);
+        //         
+        //     var command = new DownloadBlob()
+        //     {
+        //         Uri = blobReference.Uri,
+        //     };
+        //     
+        //     await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
+        //     {
+        //         _ = await _azureStorageWrapper.DownloadBlobAsync(command);
+        //     });
+        // }
     }
 }

@@ -22,7 +22,14 @@ jobs:
       - name: '🧱 dotnet build'
         run: dotnet build
         working-directory: './src/AzureStorageWrapper/AzureStorageWrapper'
-        
+
+      - name: '💾 azurite'
+        run: |
+          npm install -g azurite
+          azurite --location c:\azurite --debug c:\azurite\debug.log
+
       - name: '🚨 dotnet test'
         run: dotnet test --environment AZURE_STORAGE_CONNECTION_STRING="${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}"
         working-directory: './src/AzureStorageWrapper/AzureStorageWrapper.Tests'
+
+
