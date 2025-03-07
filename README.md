@@ -158,7 +158,7 @@ For example, a virtual folder with a unique identifier is automatically created 
 
 However, you can customize the `UseVirtualFolder` property, which by default has a value of `true` but you can set it to `false` if you wish.
 
-⚠️ When `UseVirtualFolder` is set to `false`, files will **NOT** be stored in virtual directories. This change may lead to file name collisions, causing files to be **overwritten**.
+> ⚠️ When `UseVirtualFolder` is set to `false`, files will **NOT** be stored in virtual directories. This change may lead to file name collisions, causing files to be **overwritten**.
 
 In this scenario, you must implement your own mechanism to generate unique file names.
 
