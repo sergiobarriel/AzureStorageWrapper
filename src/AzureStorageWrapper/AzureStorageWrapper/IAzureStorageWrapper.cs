@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Queries;
 using AzureStorageWrapper.Responses;
 
 namespace AzureStorageWrapper
@@ -40,12 +41,5 @@ namespace AzureStorageWrapper
         /// </summary>
         /// <returns></returns>
         Task<BlobReferenceCollection> EnumerateBlobsAsync(EnumerateBlobs command);
-
-        /// <summary>
-        /// Enumerate all blobs inside an Azure Storage container
-        /// </summary>
-        /// <param name="command"></param>
-        /// <returns></returns>
-        Task<BlobReferenceCollection> EnumerateAllBlobsAsync(EnumerateAllBlobs command);
     }
 }

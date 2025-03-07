@@ -18,23 +18,22 @@
 To add **AzureStorageWrapper** to dependencies container, just use the method `AddAzureStorageWrapper(...)`
 
 ```csharp
-public void ConfigureServices(IServiceCollection serviceCollection)
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAzureStorageWrapper(configuration =>
 {
-    serviceCollection.AddAzureStorageWrapper(configuration =>
-    {
-        configuration.ConnectionString = "azure-storage-connection-string"
-        configuration.MaxSasUriExpiration = 600;
-        configuration.DefaultSasUriExpiration = 300;
-        configuration.CreateContainerIfNotExists = true;
-    });
-}
+    configuration.ConnectionString = "azure-storage-connection-string";
+    configuration.MaxSasUriExpiration = 600;
+    configuration.DefaultSasUriExpiration = 300;
+    configuration.CreateContainerIfNotExists = true;
+});
 ```
 
 These are the *main* properties:
-- **ConnectionString**: The connection string of your Azure Storage Account. You can export by following [this document](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage?tabs=azure-portal#view-account-access-keys)
-- **MaxSasUriExpiration**: You can set a maximum duration value for the Shared Access Signature (SAS) of an Azure Storage file to prevent someone from attempting to generate a token with a longer expiration time. Expressed in seconds.
-- **DefaultSasUriExpiration**: You can download a file using AzureStorageWrapper without specifying the `ExpiresIn` property. By doing so, this value will be automatically set. Expressed in seconds
-- **CreateContainerIfNotExists**: When uploading a file to Azure Storage, you need to specify the container, which may not exist and can be created automatically. You can set it to `true` or `false` based on your requirements. Please consider this property if you have automated your infrastructure with any Infrastructure as Code (IaC) mechanism because it affects the state of your infrastructure.
+- **ConnectionString**: The connection string of your Azure Storage Account. You can export it by following [this documentation](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage?tabs=azure-portal#view-account-access-keys)
+- **MaxSasUriExpiration**: You can set a maximum duration value for the Shared Access Signature (SAS) of an Azure Storage file to prevent someone from attempting to generate a token with a longer expiration time. The duration is expressed in seconds.
+- **DefaultSasUriExpiration**: You can download a file using AzureStorageWrapper without specifying the `ExpiresIn` property. By doing so, this value will be automatically set. The duration is xpressed in seconds
+- **CreateContainerIfNotExists**: When uploading a file to Azure Storage, you need to specify the container, which may not exist and can be created automatically. You can set it to `true` or `false` based on your requirements. Consider this property if you have automated your infrastructure with an Infrastructure as Code (IaC) mechanism because it affects the state of your infrastructure.
 
 Then you can inject `IAzureStorageWrapper` into your services through constructor:
 
@@ -54,11 +53,13 @@ public class MyService
 
 There are **3 options** to upload blobs, all the ways follow the same pattern:
 
-- You need to specify the *file name* and *extension*.
-- You need to specify the *container* where you want to store the file.
-- You can add additional *metadata* with relevant information.
+- You need to specify the `Name` and `Extension`.
+- You need to specify the `Container` where you want to store the file.
+- You can add additional `Metadata` with relevant information.
 
-The file will be placed in *Base64*, *Bytes* or *Stream* property.
+The file will be placed in `Base64`, `Bytes` or `Stream` property.
+
+Optionally you can specify the `UseVirtualFolder` property to save the file in a virtual folder. By default, it is set to `true`. We delve deeper into this point later.
 
 ### Base64
 
@@ -113,7 +114,7 @@ var response = await _azureStorageWrapper.UploadBlobAsync(command);
 
 ## Response after upload blobs
 
-Regardless of the chosen upload mechanism, you will always receive this response after upload a file.
+Regardless of the chosen upload mechanism, you will always receive a `BlobReference` object after uploading a file.
 
 ```csharp
 public class BlobReference
@@ -145,15 +146,21 @@ In example, if you upload the file `hello.md` file to container `files` you will
 }
 ```
 
-It is your responsibility to save the reference (URI property) of the file you have uploaded to Azure Storage somewhere, as you will need it for later downloads.
+> It is your responsibility to save the reference (URI property) of the file you have uploaded to Azure Storage somewhere, as you will need it for later downloads.
 
 ## Virtual Folders
 
-The upload commands have a property called `UseVirtualFolder` which by default has a value of `true` but you can set it to `false` if you wish.
+By default, files are stored in the desired container using **virtual folders**, allowing you to upload files with the same name without risking name collisions.
 
-**Be careful.** If you make that change, the files will NOT be saved in virtual directories, and file names may collide, causing files to be overwritten.
+For example, a virtual folder with a unique identifier is automatically created between the container name `files` and the file name `hello.md`, resulting in a URI like this:
 
-> In this case, you must be responsible for establishing your own mechanism to generate unique file names.
+`https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md`
+
+However, you can customize the `UseVirtualFolder` property, which by default has a value of `true` but you can set it to `false` if you wish.
+
+> ⚠️ When `UseVirtualFolder` is set to `false`, files will **NOT** be stored in virtual directories. This change may lead to file name collisions, causing files to be **overwritten**.
+
+In this scenario, you must implement your own mechanism to generate unique file names.
 
 ```csharp
 var base64 = "SGVsbG8g8J+Zgg==";
@@ -162,7 +169,7 @@ var command = new UploadBase64()
 {
     Base64 = base64,
     Container = "files",
-    Name = "hello",
+    Name = $"{Guid.NewGuid()}",
     Extension = "md",
     UseVirtualFolder = false // be careful!
 };
@@ -172,16 +179,16 @@ var response = await _azureStorageWrapper.UploadBlobAsync(command);
 
 ## Download blob references
 
-To download a blob reference, you need specify the *Uri*.
+To download a blob reference, you need to specify the `Uri`, which you should have stored in your system in some way
 
 ```csharp
-var command = new DownloadBlobReference()
+var query = new DownloadBlobReference()
 {
     Uri = "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md"
     ExpiresIn = 60,
 };
 
-var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
+var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(query);
 ```
 
 The response when *downloading* file reference resembles the response when *uploading* files:
@@ -202,7 +209,7 @@ The response when *downloading* file reference resembles the response when *uplo
 
 ## Delete blobs
 
-You can delete a blob by specifying the *Uri*.
+You can delete a blob by specifying the `Uri`.
 
 ```csharp
 var command = new DeleteBlob()
@@ -215,53 +222,58 @@ await _azureStorageWrapper.DeleteBlobAsync(command);
 
 ## Enumerate blobs
 
-You can list all blobs in a container by using the method `EnumerateAllBlobsAsync` or paginate the results by using `EnumerateBlobsAsync` method. The second one requires the `Size` property to be set. 
+You can list all blobs in a container by using the method `EnumerateBlobsAsync`. 
 
-In both cases, the response `BlobReferenceCollection` will contain a collection of `BlobReference` elements.
+The response `BlobReferenceCollection` will contain a collection of `BlobReference` elements.
 
 ### Without pagination
 
+You should only run this query if you are certain that your container stores a small number of blobs.
+
 ```csharp
-var command = new EnumerateAllBlobs()
+var query = new EnumerateBlobs()
 {
-    Container = "files"
+    Container = "files",
+    Paginate = false
 };
 
-var response = await _azureStorageWrapper.EnumerateAllBlobsAsync(command);
-
-
+var response = await _azureStorageWrapper.EnumerateAllBlobsAsync(query);
 ```
+
 ### With pagination
 
 ```csharp
-var command = new EnumerateBlobs()
+var query = new EnumerateBlobs()
 {
-    Container = "files"
+    Container = "files",
+    Paginate = true.
     Size = 10,
 };
 
-var response = await _azureStorageWrapper.EnumerateBlobsAsync(command);
+var response = await _azureStorageWrapper.EnumerateBlobsAsync(query);
 
 ```
 Then you can request additional pages by using the `ContinuationToken` property in the next request.
 
 ```csharp
-var firstCommand = new EnumerateBlobs()
+var firstQuery = new EnumerateBlobs()
 {
-    Container = "files"
+    Container = "files",
+    Paginate = true,
     Size = 10,
 };
 
-var firstResponse = await _azureStorageWrapper.EnumerateBlobsAsync(firstCommand);
+var firstResponse = await _azureStorageWrapper.EnumerateBlobsAsync(firstQuery);
 
-var secondCommand = new EnumerateBlobs()
+var secondQuery = new EnumerateBlobs()
 {
-    Container = "files"
+    Container = "files",
+    Paginate = true,
     Size = 10,
     ContinuationToken = firstResponse.ContinuationToken
 };
 
-var secondResponse = await _azureStorageWrapper.EnumerateBlobsAsync(secondCommand);
+var secondResponse = await _azureStorageWrapper.EnumerateBlobsAsync(secondQuery);
 ```
 
 # Contributors / Collaborators
@@ -278,4 +290,4 @@ If you like the project, you can consider making a donation at [ko-fi.com](https
 
 # Support
 
-You can contact me via Twitter [@sergiobarriel](https://twitter.com/sergiobarriel), or if you have an [issue](https://github.com/sergiobarriel/AzureStorageWrapper/issues), you can open one 🙂
+You can contact me via Bluesky [@sergiobarriel.bsky.social](https://bsky.app/profile/sergiobarriel.bsky.social) or Twitter [@sergiobarriel](https://twitter.com/sergiobarriel), or if you have an [issue](https://github.com/sergiobarriel/AzureStorageWrapper/issues), you can open one 🙂

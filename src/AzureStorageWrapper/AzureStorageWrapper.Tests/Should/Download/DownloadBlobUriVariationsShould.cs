@@ -1,4 +1,5 @@
 ﻿using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Queries;
 using AzureStorageWrapper.Tests.Sources;
 using Xunit;
 

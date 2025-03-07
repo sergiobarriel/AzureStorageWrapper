@@ -1,5 +1,6 @@
 ﻿using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Exceptions;
+using AzureStorageWrapper.Queries;
 using AzureStorageWrapper.Tests.Sources;
 using Xunit;
  
@@ -14,6 +15,39 @@ namespace AzureStorageWrapper.Tests.Should.Download
             _azureStorageWrapper = azureStorageWrapper;
         }
 
+        [Fact]
+        public async Task DownloadBlobReference_Should_ReturnReference()
+        {
+            // Arrange
+            
+            var base64 = "SGVsbG8g8J+Zgg==";
+            
+            var uploadBlobCommand = new UploadBase64()
+            {
+                Base64 = base64,
+                Container = "files",
+                Name = "hello",
+                Extension = "md",
+                Metadata = new Dictionary<string, string>()
+                    {{"hello", "world"}}
+            };
+
+            var uploadBlobResponse = await _azureStorageWrapper.UploadBlobAsync(uploadBlobCommand);
+                
+            var downloadBlobReferenceCommand = new DownloadBlobReference()
+            {
+                Uri = uploadBlobResponse.Uri,
+                ExpiresIn = 360,
+            };
+
+            // Act
+            var blobReference = await _azureStorageWrapper.DownloadBlobReferenceAsync(downloadBlobReferenceCommand);
+
+            // Assert
+            Assert.NotNull(blobReference);
+            Assert.True(await PingAsync(blobReference.SasUri));
+        }
+        
         [Fact]
         public async Task DownloadBlobReference_WithManyDots_Should_ReturnReference()
         {
@@ -76,8 +110,9 @@ namespace AzureStorageWrapper.Tests.Should.Download
             Assert.True(await PingAsync(blobReference.SasUri));
         }
 
-        [Fact]
-        public async Task DownloadBlobReference_Should_ReturnReference()
+        [Theory]
+        [MemberData(nameof(InvalidExpiresIn))]
+        public async Task DownloadBlobReference_WithInvalidExpires_Should_DownloadBlobReferences(int expires)
         {
             // Arrange
             
@@ -98,7 +133,7 @@ namespace AzureStorageWrapper.Tests.Should.Download
             var downloadBlobReferenceCommand = new DownloadBlobReference()
             {
                 Uri = uploadBlobResponse.Uri,
-                ExpiresIn = 360,
+                ExpiresIn = expires,
             };
 
             // Act
