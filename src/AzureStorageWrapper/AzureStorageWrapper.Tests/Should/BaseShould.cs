@@ -2,9 +2,6 @@
 {
     public class BaseShould
     {
-        internal const string ContainerWhereUploadFiles = "files";
-        internal const string ContainerWhereUploadFilesAndEnumerateThem = "files-to-enumerate";
-    
         protected static async Task<bool> PingAsync(string uri)
         {
             using var httpClient = new HttpClient();

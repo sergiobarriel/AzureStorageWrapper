@@ -11,6 +11,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Exceptions;
+using AzureStorageWrapper.Queries;
 using AzureStorageWrapper.Responses;
 
 namespace AzureStorageWrapper
@@ -149,7 +150,7 @@ namespace AzureStorageWrapper
 
             var segment = container
                 .GetBlobsAsync()
-                .AsPages(command.ContinuationToken, command.Size);
+                .AsPages(command.Paginate ? command.ContinuationToken : null, command.Paginate ? command.Size : (int?)null);
             
             var enumerator = segment.GetAsyncEnumerator();
             
@@ -182,47 +183,7 @@ namespace AzureStorageWrapper
             return new BlobReferenceCollection();
         }
         
-        public async Task<BlobReferenceCollection> EnumerateAllBlobsAsync(EnumerateAllBlobs command)
-        {
-            command.Validate();
-            
-            var container = new BlobContainerClient(_configuration.ConnectionString, command.Container);
-
-            var segment = container
-                .GetBlobsAsync()
-                .AsPages(null, 10);
-            
-            var enumerator = segment.GetAsyncEnumerator();
-            
-            var references = new List<BlobReference>();
-            
-            while (await enumerator.MoveNextAsync())
-            {
-                var page = enumerator.Current;
-
-                foreach (var item in page.Values)
-                {
-                    var blobReference = await DownloadBlobReferenceAsync(new DownloadBlobReference()
-                    {
-                        Uri = $"{container.Uri}/{item.Name}",
-                        ExpiresIn = _configuration.DefaultSasUriExpiration
-                    });
-
-                    references.Add(blobReference);
-                }
-                
-                await enumerator.DisposeAsync();
-
-                return new BlobReferenceCollection()
-                {
-                    References = references,
-                    ContinuationToken = page.ContinuationToken
-                };
-            }
-
-            return new BlobReferenceCollection();
-        }
-        
+      
         private async Task<string> GetSasUriAsync(GetSasUri command)
         {
             command.Validate(_configuration);

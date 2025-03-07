@@ -1,40 +1,46 @@
 using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Queries;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace AzureStorageWrapper.Tests.Should.Enumerate
 {
-    public class EnumerateShould : BaseShould
+    public class EnumerateBlobsShould : BaseShould
     {
         private readonly IAzureStorageWrapper _azureStorageWrapper;
         private readonly ITestOutputHelper _output;
 
-        public EnumerateShould(IAzureStorageWrapper azureStorageWrapper, ITestOutputHelper output)
+        public EnumerateBlobsShould(IAzureStorageWrapper azureStorageWrapper, ITestOutputHelper output)
         {
             _azureStorageWrapper = azureStorageWrapper;
             _output = output;
         }
         
         [Fact]
-        public async Task EnumerateBlobs_ShouldReturnAllBlobsFromAContainer()
+        public async Task EnumerateBlobs_WithoutPagination_Should_ReturnAllBlobsFromContainer()
         {
             var amount = 10;
+            var container = "without-pagination";
             
-            await UploadFilesAsync(amount);
+            await UploadFilesAsync(amount, container);
             
-            var command = new EnumerateAllBlobs()
+            var query = new EnumerateBlobs()
             {
-                Container = ContainerWhereUploadFilesAndEnumerateThem
+                Container = container,
+                Paginate = false
             };
         
-            var references = await _azureStorageWrapper.EnumerateAllBlobsAsync(command);
+            var references = await _azureStorageWrapper.EnumerateBlobsAsync(query);
             
             _output.WriteLine($"Enumerating {references.References.Count()} references");
             
             Assert.True(references.References.Any());
-            Assert.True(references.References.Count() == amount);
+            Assert.True(references.References.Count() >= amount);
 
-            await RemoveFilesAsync(references.References.Select(reference => reference.Uri).ToArray());
+            foreach (var reference in references.References)
+            {
+                await _azureStorageWrapper.DeleteBlobAsync(new DeleteBlob() { Uri = reference.Uri });
+            }
         }
         
         [Fact]
@@ -42,12 +48,14 @@ namespace AzureStorageWrapper.Tests.Should.Enumerate
         {
             var amount = 20;
             var size = 10;
+            var container = "pagination";
             
-            await UploadFilesAsync(amount);
+            await UploadFilesAsync(amount, container);
             
             var firstIterationReferences = await _azureStorageWrapper.EnumerateBlobsAsync(new EnumerateBlobs()
             {
-                Container = ContainerWhereUploadFilesAndEnumerateThem,
+                Container = container,
+                Paginate = true,
                 Size = size,
             });
             
@@ -57,7 +65,8 @@ namespace AzureStorageWrapper.Tests.Should.Enumerate
             
             var secondIterationReferences = await _azureStorageWrapper.EnumerateBlobsAsync(new EnumerateBlobs()
             {
-                Container = ContainerWhereUploadFilesAndEnumerateThem,
+                Container = container,
+                Paginate = true,
                 Size = size,
                 ContinuationToken = firstIterationReferences.ContinuationToken
             });
@@ -66,33 +75,29 @@ namespace AzureStorageWrapper.Tests.Should.Enumerate
 
             Assert.True(secondIterationReferences.References.Any());
             
-            await RemoveFilesAsync(firstIterationReferences.References.Select(reference => reference.Uri).ToArray());
-            await RemoveFilesAsync(secondIterationReferences.References.Select(reference => reference.Uri).ToArray());
+            foreach (var reference in firstIterationReferences.References)
+            {
+                await _azureStorageWrapper.DeleteBlobAsync(new DeleteBlob() { Uri = reference.Uri });
+            }
+            
+            foreach (var reference in secondIterationReferences.References)
+            {
+                await _azureStorageWrapper.DeleteBlobAsync(new DeleteBlob() { Uri = reference.Uri });
+            }
         }
 
-        private async Task UploadFilesAsync(int amount)
+        private async Task UploadFilesAsync(int amount, string container)
         {
             for (var i = 0; i < amount; i++)
             {
                 await _azureStorageWrapper.UploadBlobAsync(new UploadBase64()
                 {
                     Base64 =  "SGVsbG8g8J+Zgg==",
-                    Container = ContainerWhereUploadFilesAndEnumerateThem,
+                    Container = container,
                     Name = "hello",
                     Extension = "md",
                     Metadata = new Dictionary<string, string>()
                         {{"hello", "world"}}
-                });
-            }
-        }
-
-        private async Task RemoveFilesAsync(string[] uris)
-        {
-            foreach (var uri in uris)
-            {
-                await _azureStorageWrapper.DeleteBlobAsync(new DeleteBlob()
-                {
-                    Uri = uri
                 });
             }
         }

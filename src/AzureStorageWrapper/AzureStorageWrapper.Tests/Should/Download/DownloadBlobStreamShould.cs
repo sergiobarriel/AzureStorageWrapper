@@ -1,5 +1,6 @@
 ﻿using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Exceptions;
+using AzureStorageWrapper.Queries;
 using AzureStorageWrapper.Tests.Sources;
 using Xunit;
 

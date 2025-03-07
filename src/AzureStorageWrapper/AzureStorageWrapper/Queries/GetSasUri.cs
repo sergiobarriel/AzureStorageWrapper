@@ -1,7 +1,7 @@
 ﻿using System;
 using AzureStorageWrapper.Exceptions;
 
-namespace AzureStorageWrapper.Commands
+namespace AzureStorageWrapper.Queries
 {
     internal class GetSasUri
     {
