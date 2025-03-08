@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureStorageWrapper", "src\AzureStorageWrapper\AzureStorageWrapper.csproj", "{2589764D-0229-ED26-7A68-14C5BD399C78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureStorageWrapper.Tests", "src\AzureStorageWrapper.Tests\AzureStorageWrapper.Tests.csproj", "{AE079CC8-4A2D-DEA4-B0CB-ABEA826CED09}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2589764D-0229-ED26-7A68-14C5BD399C78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2589764D-0229-ED26-7A68-14C5BD399C78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2589764D-0229-ED26-7A68-14C5BD399C78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2589764D-0229-ED26-7A68-14C5BD399C78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE079CC8-4A2D-DEA4-B0CB-ABEA826CED09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE079CC8-4A2D-DEA4-B0CB-ABEA826CED09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE079CC8-4A2D-DEA4-B0CB-ABEA826CED09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE079CC8-4A2D-DEA4-B0CB-ABEA826CED09}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0E6E5E6C-8A40-40E0-AD44-E232459456CF}
+	EndGlobalSection
+EndGlobal

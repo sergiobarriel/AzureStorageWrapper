@@ -19,15 +19,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Include="..\..\..\images\icon.png">
+	  <None Include="..\..\res\images\icon.png">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
-	  <None Include="..\..\..\LICENSE">
+	  <None Include="..\..\LICENSE">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
-	  <None Include="..\..\..\README.md">
+	  <None Include="..\..\README.md">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
