@@ -1,12 +1,9 @@
-﻿using System;
+using System;
 
 namespace AzureStorageWrapper.Exceptions
 {
     public class AzureStorageWrapperException : Exception
     {
-        public AzureStorageWrapperException(string message) : base(message)
-        {
-            
-        }
+        public AzureStorageWrapperException(string message) : base(message) { }
     }
 }

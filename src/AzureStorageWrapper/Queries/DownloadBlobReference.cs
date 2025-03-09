@@ -1,5 +1,5 @@
-using System;
-using AzureStorageWrapper.Exceptions;
+using AzureStorageWrapper.Extensions;
+using EnsureThat;
 
 namespace AzureStorageWrapper.Queries
 {
@@ -8,16 +8,10 @@ namespace AzureStorageWrapper.Queries
         public string Uri { get; set; }
         public int ExpiresIn { get; set; }
         
-        internal void Validate(AzureStorageWrapperOptions options)
+        internal void Validate(AzureStorageWrapperOptions option)
         {
-            if (string.IsNullOrEmpty(Uri))
-                throw new AzureStorageWrapperException($"{nameof(Uri)} is empty!");
-            
-            if(!System.Uri.TryCreate(Uri, UriKind.Absolute, out var @_))
-                throw new AzureStorageWrapperException($"{nameof(Uri)} is not a valid absolute URI!");
-            
-            if (ExpiresIn > options.MaxSasUriExpiration)
-                throw new AzureStorageWrapperException($"{nameof(ExpiresIn)} should be lower than {options.MaxSasUriExpiration}");
+            Ensure.String.IsNotUri(Uri);
+            Ensure.Comparable.IsLteSW(ExpiresIn, option.MaxSasUriExpiration);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using AzureStorageWrapper.Exceptions;
@@ -22,7 +22,7 @@ namespace AzureStorageWrapper.Commands
                 var bytes = Convert.FromBase64String(Base64);
                 return new MemoryStream(bytes);
             }
-            catch (Exception _)
+            catch (Exception)
             {
                 throw new AzureStorageWrapperException("Invalid base64 string");
             }

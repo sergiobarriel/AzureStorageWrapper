@@ -1,4 +1,5 @@
-using AzureStorageWrapper.Exceptions;
+using AzureStorageWrapper.Extensions;
+using EnsureThat;
 
 namespace AzureStorageWrapper.Queries
 {
@@ -11,14 +12,9 @@ namespace AzureStorageWrapper.Queries
         
         internal void Validate()
         {
-            if (string.IsNullOrEmpty(Container))
-                throw new AzureStorageWrapperException($"{nameof(Container)} is empty!");
-            
-            if (Paginate && Size <= 0)
-                throw new AzureStorageWrapperException($"{nameof(Size)} should be greater than zero when {nameof(Paginate)} is true.");
-            
-            if(!Paginate && !string.IsNullOrEmpty(ContinuationToken))
-                throw new AzureStorageWrapperException($"{nameof(ContinuationToken)} should be empty when {nameof(Paginate)} is false.");
+            Ensure.String.IsNotNullOrEmptySW(Container);
+            Ensure.Bool.IsPaginateValid(Paginate, Size);
+            Ensure.Bool.IsPaginateValid(Paginate, ContinuationToken);
         }
     }
 }

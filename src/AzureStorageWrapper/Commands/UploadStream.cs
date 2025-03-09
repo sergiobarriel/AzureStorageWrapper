@@ -1,5 +1,6 @@
-﻿using System.IO;
-using AzureStorageWrapper.Exceptions;
+using System.IO;
+using AzureStorageWrapper.Extensions;
+using EnsureThat;
 
 namespace AzureStorageWrapper.Commands
 {
@@ -7,11 +8,6 @@ namespace AzureStorageWrapper.Commands
     {
         public Stream Stream { get; set; }
 
-        public override Stream GetContent()
-        {
-            if (Stream.Length == 0) throw new AzureStorageWrapperException($"{nameof(Stream)} length is 0");
-
-            return Stream;
-        }
+        public override Stream GetContent() => Ensure.Any.IsNotZero(Stream);
     }
 }

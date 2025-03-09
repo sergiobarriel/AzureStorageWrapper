@@ -11,8 +11,10 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Exceptions;
+using AzureStorageWrapper.Extensions;
 using AzureStorageWrapper.Queries;
 using AzureStorageWrapper.Responses;
+using EnsureThat;
 
 namespace AzureStorageWrapper
 {
@@ -21,9 +23,7 @@ namespace AzureStorageWrapper
         private readonly AzureStorageWrapperOptions _options;
 
         public AzureStorageWrapper(AzureStorageWrapperOptions options)
-        {
-            _options = options;
-        }
+            => _options = options;
 
         public async Task<BlobReference> UploadBlobAsync(UploadBlob command)
         {
@@ -33,9 +33,8 @@ namespace AzureStorageWrapper
             
             if (!await container.ExistsAsync())
             {
-                if (_options.CreateContainerIfNotExists) await container.CreateIfNotExistsAsync();
-                
-                else throw new AzureStorageWrapperException($"container {command.Container} doesn't exists!");
+                Ensure.Bool.IsNotExistContainer(_options.CreateContainerIfNotExists, command.Container);
+                await container.CreateIfNotExistsAsync();
             }
 
             var blobName = command.UseVirtualFolder
@@ -115,10 +114,7 @@ namespace AzureStorageWrapper
             {
                 var response = await httpClient.GetAsync(sasUri);
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new AzureStorageWrapperException($"something went wrong when downloading blob {command.Uri}");
-                }
+                Ensure.Bool.IsTrue(response.IsSuccessStatusCode, $"something went wrong when downloading blob {command.Uri}");
 
                 var stream = await response.Content.ReadAsStreamAsync();
                 

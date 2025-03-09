@@ -1,19 +1,21 @@
-﻿using System;
-using AzureStorageWrapper.Exceptions;
+using AzureStorageWrapper.Extensions;
+using EnsureThat;
 
 namespace AzureStorageWrapper.Commands
 {
+    /// <summary>
+    /// Represents a command to delete a blob.
+    /// </summary>
     public class DeleteBlob
     {
+        /// <summary>
+        /// Gets or sets the URI of the blob to be deleted.
+        /// </summary>
         public string Uri { get; set; }
-        
-        internal void Validate()
-        {
-            if (string.IsNullOrEmpty(Uri))
-                throw new AzureStorageWrapperException($"{nameof(Uri)} is empty!");
-            
-            if(!System.Uri.TryCreate(Uri, UriKind.Absolute, out var @_))
-                throw new AzureStorageWrapperException($"{nameof(Uri)} is not a valid absolute URI!");
-        }
+
+        /// <summary>
+        /// Validates the URI of the blob.
+        /// </summary>
+        internal void Validate() => Ensure.String.IsNotUri(Uri);
     }
 }
