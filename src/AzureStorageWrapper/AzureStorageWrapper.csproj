@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+		<version>2.4.2</version>
+		<Title>AzureStorageWrapper</Title>
+		<Authors>Sergio Barriel</Authors>
+		<Description>Wrapper for Azure Storage, designed to simplify the file upload process and provide links for downloading them. It also supports file deletion and enumeration.</Description>
+		<PackageProjectUrl>https://github.com/sergiobarriel/AzureStorageWrapper</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/sergiobarriel/AzureStorageWrapper</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>azure-storage wrapper</PackageTags>
+		<PackageIcon>icon.png</PackageIcon>
+		<Copyright>MIT License</Copyright>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<IncludeSymbols>False</IncludeSymbols>
+		<PackageReleaseNotes></PackageReleaseNotes>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\res\images\icon.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\LICENSE">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
+		<PackageReference Include="Ensure.That" Version="10.1.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="icon.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+</Project>

@@ -11,21 +11,93 @@
 📦 View package on [NuGet Gallery](https://www.nuget.org/packages/AzureStorageWrapper/)
 📦 View package on [nuget.info](https://nuget.info/packages/AzureStorageWrapper)
 
+## Supported framework
+
+* .Net Standard 2.0
+* .Net Standard 2.1
+
+## Installation the package
+Install the AzureStorageWrapper client library for .NET with NuGet:
+
+```dotnetcli
+dotnet add package AzureStorageWrapper
+ ```
+
+``` nuget
+NuGet Install-Package AzureStorageWrapper -Version x.y.z
+```
+This command is intended to be used within the Package Manager Console in Visual Studio, as it uses the NuGet module's version of [Install-Package](https://learn.microsoft.com/es-es/nuget/reference/ps-reference/ps-ref-install-package).
+
+``` 
+<PackageReference Include="AzureStorageWrapper" Version="x.y.z" />
+```
+ For projects that support [PackageReference](https://learn.microsoft.com/es-es/nuget/consume-packages/package-references-in-project-files), copy this XML node into the project file to reference the package.
+
 # Usage
 
 ## Dependency injection
 
-To add **AzureStorageWrapper** to dependencies container, just use the method `AddAzureStorageWrapper(...)`
+### File configuration
+#### local.settings.json (Azure Function)
+```json
+{
+    "IsEncrypted": false,
+    "Values": {
+        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+        
+        //Configuration StorageWrapper
+        StorageWrapper_ConnectionsString="..." //Is a configuration setting that contains the necessary information to connect to your Azure Storage account. Type: String. Recomended
+        StorageWrapper_MaxSasUriExpiration="..." //It sets the maximum duration for the Shared Access Signature (SAS) URI of an Azure Storage file. Type: int. Default: 600. Optional
+        StorageWrapper_DefaultSasUriExpiration="..." //It sets the default duration for the Shared Access Signature (SAS) URI of an Azure Storage file. Type: int. Default: 300. Optional
+        StorageWrapper_ReateContainerIfNotExists="..." //Determines whether the Azure Storage container should be automatically created if it does not already exist.Type: bool. Defult: true. Optional
+    }
+}
+```
+#### app.settings.json 
+```json
+{
+    //Configuration StorageWrapper
+        //Configuration StorageWrapper
+        StorageWrapper_ConnectionsString="..." //Is a configuration setting that contains the necessary information to connect to your Azure Storage account. Type: String. Recomended
+        StorageWrapper_MaxSasUriExpiration="..." //It sets the maximum duration for the Shared Access Signature (SAS) URI of an Azure Storage file. Type: int. Default: 600. Optional
+        StorageWrapper_DefaultSasUriExpiration="..." //It sets the default duration for the Shared Access Signature (SAS) URI of an Azure Storage file. Type: int. Default: 300. Optional
+        StorageWrapper_ReateContainerIfNotExists="..." //Determines whether the Azure Storage container should be automatically created if it does not already exist.Type: bool. Defult: true. Optional
+}
+```
+
+> **Remember** that the variable names are suggested and you can change them according to your needs.
+
+### Minimal Configuration
+To add **AzureStorageWrapper** to dependencies container.
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAzureStorageWrapper(configuration =>
+builder.Services.AddAzureStorageWrapper();
+```
+> **Warning:** You must configure the **StorageWrapper_ConnectionString** variable in the configuration file.
+
+### ConnectionString Configuration
+To add **AzureStorageWrapper** to dependencies container, just use the method `AddAzureStorageWrapper(string connectionstring)`
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration["Connection_String"];
+builder.Services.AddAzureStorageWrapper(connectionString);
+```
+### Configuration
+To add **AzureStorageWrapper** to dependencies container, just use the method `AddAzureStorageWrapper(...)`
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration["Connection_String"];
+builder.Services.AddAzureStorageWrapper(options =>
 {
-    configuration.ConnectionString = "azure-storage-connection-string";
-    configuration.MaxSasUriExpiration = 600;
-    configuration.DefaultSasUriExpiration = 300;
-    configuration.CreateContainerIfNotExists = true;
+    options.ConnectionString = "azure-storage-connection-string";
+    options.MaxSasUriExpiration = 600;
+    options.DefaultSasUriExpiration = 300;
+    options.CreateContainerIfNotExists = true;
 });
 ```
 
@@ -184,7 +256,7 @@ To download a blob reference, you need to specify the `Uri`, which you should ha
 ```csharp
 var query = new DownloadBlobReference()
 {
-    Uri = "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md"
+    Uri = "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md",
     ExpiresIn = 60,
 };
 
@@ -237,7 +309,7 @@ var query = new EnumerateBlobs()
     Paginate = false
 };
 
-var response = await _azureStorageWrapper.EnumerateAllBlobsAsync(query);
+var response = await _azureStorageWrapper.EnumerateBlobsAsync(query);
 ```
 
 ### With pagination
@@ -246,7 +318,7 @@ var response = await _azureStorageWrapper.EnumerateAllBlobsAsync(query);
 var query = new EnumerateBlobs()
 {
     Container = "files",
-    Paginate = true.
+    Paginate = true,
     Size = 10,
 };
 
@@ -276,6 +348,24 @@ var secondQuery = new EnumerateBlobs()
 var secondResponse = await _azureStorageWrapper.EnumerateBlobsAsync(secondQuery);
 ```
 
+# Samples
+
+| Framework | Type | Samples | 
+| --- | --- | --- |
+| NET Core | Console |[Dependency Injections - Minimal Configuration](./samples/dotnetcore/console/DependencyInjections/minimal-configuration/) | 
+| NET Core | Console | [Dependency Injections - ConnectionString Configuration](./samples/dotnetcore/console/DependencyInjections/connectionstring-configuration/) |
+| NET Core | Console | [Dependency Injections - Configuration](./samples/dotnetcore/console/DependencyInjections/configuration/) |
+| NET Core | Console | [Without Dependency Injections](./samples/dotnetcore/console/WithoutDependencyInjections/) |
+| NET Core | Azure Function |[Dependency Injections - Minimal Configuration](./samples/dotnetcore/az-function/DependencyInjections/minimal-configuration/) | 
+| NET Core | Azure Function | [Dependency Injections - ConnectionString Configuration](./samples/dotnetcore/az-function/DependencyInjections/connectionstring-configuration/) |
+| NET Core | Azure Function | [Dependency Injections - Configuration](./samples/dotnetcore/az-function/DependencyInjections/configuration/) |
+| NET Core | Azure Function | [Without Dependency Injections](./samples/dotnetcore/az-function/WithoutDependencyInjections/) |
+| NET FW | Console |[Dependency Injections - Minimal Configuration](./samples/dotnetfw/console/DependencyInjections/minimal-configuration/) | 
+| NET FW | Console | [Dependency Injections - ConnectionString Configuration](./samples/dotnetfw/console/DependencyInjections/connectionstring-configuration/) |
+| NET FW | Console | [Dependency Injections - Configuration](./samples/dotnetfw/console/DependencyInjections/configuration/) |
+| NET FW | Console | [Without Dependency Injections](./samples/dotnetfw/console/WithoutDependencyInjections/) |
+
+
 # Contributors / Collaborators
 
 These individuals have contributed to the repository through suggestions, error corrections, or by opening issues. Thanks 😊
@@ -291,3 +381,4 @@ If you like the project, you can consider making a donation at [ko-fi.com](https
 # Support
 
 You can contact me via Bluesky [@sergiobarriel.bsky.social](https://bsky.app/profile/sergiobarriel.bsky.social) or Twitter [@sergiobarriel](https://twitter.com/sergiobarriel), or if you have an [issue](https://github.com/sergiobarriel/AzureStorageWrapper/issues), you can open one 🙂
+

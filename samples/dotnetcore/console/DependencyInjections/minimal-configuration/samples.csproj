@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Virtual_Folders.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\..\sharedcontent\AzuriteHelper.cs" Link="AzuriteHelper.cs" />
+    <Compile Include="..\..\..\..\sharedcontent\ConsoleHelper.cs" Link="ConsoleHelper.cs" />
+    <Compile Include="..\..\..\..\sharedcontent\Delete_Blobs.cs" Link="Delete_Blobs.cs" />
+    <Compile Include="..\..\..\..\sharedcontent\Download_Blobs.cs" Link="Download_Blobs.cs" />
+    <Compile Include="..\..\..\..\sharedcontent\Enumerate_Blobs.cs" Link="Enumerate_Blobs.cs" />
+    <Compile Include="..\..\..\..\sharedcontent\Samples_All.cs" Link="Samples_All.cs" />
+    <Compile Include="..\..\..\..\sharedcontent\Upload_Blobs.cs" Link="Upload_Blobs.cs" />
+    <Compile Include="..\..\..\..\sharedcontent\Virtual_Folders.cs" Link="Virtual_Folders.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\sharedcontent\run-azurite.bat" Link="run-azurite.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\..\..\sharedcontent\run-azurite.sh" Link="run-azurite.sh" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\src\AzureStorageWrapper\AzureStorageWrapper.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="app.settings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
