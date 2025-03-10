@@ -256,7 +256,7 @@ To download a blob reference, you need to specify the `Uri`, which you should ha
 ```csharp
 var query = new DownloadBlobReference()
 {
-    Uri = "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md"
+    Uri = "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md",
     ExpiresIn = 60,
 };
 
@@ -309,7 +309,7 @@ var query = new EnumerateBlobs()
     Paginate = false
 };
 
-var response = await _azureStorageWrapper.EnumerateAllBlobsAsync(query);
+var response = await _azureStorageWrapper.EnumerateBlobsAsync(query);
 ```
 
 ### With pagination
@@ -318,7 +318,7 @@ var response = await _azureStorageWrapper.EnumerateAllBlobsAsync(query);
 var query = new EnumerateBlobs()
 {
     Container = "files",
-    Paginate = true.
+    Paginate = true,
     Size = 10,
 };
 
@@ -347,6 +347,24 @@ var secondQuery = new EnumerateBlobs()
 
 var secondResponse = await _azureStorageWrapper.EnumerateBlobsAsync(secondQuery);
 ```
+
+# Samples
+
+| Framework | Type | Samples | 
+| --- | --- | --- |
+| NET Core | Console |[Dependency Injections - Minimal Configuration](./samples/dotnetcore/console/DependencyInjections/minimal-configuration/) | 
+| NET Core | Console | [Dependency Injections - ConnectionString Configuration](./samples/dotnetcore/console/DependencyInjections/connectionstring-configuration/) |
+| NET Core | Console | [Dependency Injections - Configuration](./samples/dotnetcore/console/DependencyInjections/configuration/) |
+| NET Core | Console | [Without Dependency Injections](./samples/dotnetcore/console/WithoutDependencyInjections/) |
+| NET Core | Azure Function |[Dependency Injections - Minimal Configuration](./samples/dotnetcore/az-function/DependencyInjections/minimal-configuration/) | 
+| NET Core | Azure Function | [Dependency Injections - ConnectionString Configuration](./samples/dotnetcore/az-function/DependencyInjections/connectionstring-configuration/) |
+| NET Core | Azure Function | [Dependency Injections - Configuration](./samples/dotnetcore/az-function/DependencyInjections/configuration/) |
+| NET Core | Azure Function | [Without Dependency Injections](./samples/dotnetcore/az-function/WithoutDependencyInjections/) |
+| NET FW | Console |[Dependency Injections - Minimal Configuration](./samples/dotnetfw/console/DependencyInjections/minimal-configuration/) | 
+| NET FW | Console | [Dependency Injections - ConnectionString Configuration](./samples/dotnetfw/console/DependencyInjections/connectionstring-configuration/) |
+| NET FW | Console | [Dependency Injections - Configuration](./samples/dotnetfw/console/DependencyInjections/configuration/) |
+| NET FW | Console | [Without Dependency Injections](./samples/dotnetfw/console/WithoutDependencyInjections/) |
+
 
 # Contributors / Collaborators
 
