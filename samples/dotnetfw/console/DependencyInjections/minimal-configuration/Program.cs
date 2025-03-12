@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Runtime.Remoting.Contexts;
 using System.Threading.Tasks;
 using AzureStorageWrapper;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,8 @@ namespace samples
             var serviceProvider = ConfigureServices((configuration, services) =>
             {
                 Environment.SetEnvironmentVariable("StorageWrapper_ConnectionString", configuration["StorageWrapper_ConnectionString"]);// Set the StorageWrapper_ConnectionString string in the environment variables
+                // The default container used for all storage operations if not specified explicitly. It is optional
+                Environment.SetEnvironmentVariable("StorageWrapper_DefaultContainer", configuration["StorageWrapper_DefaultContainer"]);
                 services.AddAzureStorageWrapper();//Configuration AzureStorageWrapper
 
                 services.AddExample_All();//Configuration Example_All

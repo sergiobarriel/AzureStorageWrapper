@@ -1,11 +1,9 @@
 using System;
 using System.Security.Cryptography;
-using Newtonsoft.Json;
-
 #if NETCOREAPP
 using System.Text.Json;
 #elif NETFRAMEWORK
-
+using Newtonsoft.Json;
 #endif
 
 namespace samples.Helpers

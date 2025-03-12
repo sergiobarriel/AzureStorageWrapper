@@ -1,103 +1,102 @@
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace AzureStorageWrapper.Tests.Should.DependencyInjection;
-
-public class DependencyInjectionTests
+namespace AzureStorageWrapper.Tests
 {
-    [Fact]
-    public void AddAzureStorageWrapper_NoParameters_ShouldAddServices()
+    public class DependencyInjectionTests
     {
-        // Arrange
-        var serviceCollection = new ServiceCollection();
-        Environment.SetEnvironmentVariable("StorageWrapper_ConnectionString", "UseDevelopmentStorage=true");
-
-        // Act
-        serviceCollection.AddAzureStorageWrapper();
-
-        // Assert
-        var serviceProvider = serviceCollection.BuildServiceProvider();
-        var options = serviceProvider.GetService<AzureStorageWrapperOptions>();
-        var wrapper = serviceProvider.GetService<IAzureStorageWrapper>();
-
-        Assert.NotNull(options);
-        Assert.NotNull(wrapper);
-    }
-
-    [Fact]
-    public void AddAzureStorageWrapper_WithConnectionString_ShouldAddServices()
-    {
-        // Arrange
-        var serviceCollection = new ServiceCollection();
-        var connectionString = "UseDevelopmentStorage=true";
-
-        // Act
-        serviceCollection.AddAzureStorageWrapper(connectionString);
-
-        // Assert
-        var serviceProvider = serviceCollection.BuildServiceProvider();
-        var options = serviceProvider.GetService<AzureStorageWrapperOptions>();
-        var wrapper = serviceProvider.GetService<IAzureStorageWrapper>();
-
-        Assert.NotNull(options);
-        Assert.Equal(connectionString, options.ConnectionString);
-        Assert.NotNull(wrapper);
-    }
-
-    [Fact]
-    public void AddAzureStorageWrapper_WithOptions_ShouldAddServices()
-    {
-        // Arrange
-        var serviceCollection = new ServiceCollection();
-        var options = new AzureStorageWrapperOptions
+        [Fact]
+        public void AddAzureStorageWrapper_WithDefaultParameters_ShouldConfigureServices()
         {
-            ConnectionString = "UseDevelopmentStorage=true",
-            MaxSasUriExpiration = 600,
-            DefaultSasUriExpiration = 300,
-            CreateContainerIfNotExists = true
-        };
+            // Arrange
+            var services = new ServiceCollection();
+            Environment.SetEnvironmentVariable("StorageWrapper_ConnectionString", "DefaultConnectionString");
+            Environment.SetEnvironmentVariable("StorageWrapper_DefaultContainer", "DefaultContainer");
 
-        // Act
-        serviceCollection.AddAzureStorageWrapper(options);
+            // Act
+            services.AddAzureStorageWrapper();
 
-        // Assert
-        var serviceProvider = serviceCollection.BuildServiceProvider();
-        var resolvedOptions = serviceProvider.GetService<AzureStorageWrapperOptions>();
-        var wrapper = serviceProvider.GetService<IAzureStorageWrapper>();
+            // Assert
+            var serviceProvider = services.BuildServiceProvider();
+            var options = serviceProvider.GetService<AzureStorageWrapperOptions>();
+            Assert.NotNull(options);
+            Assert.Equal("DefaultConnectionString", options.ConnectionString);
+            Assert.Equal("DefaultContainer", options.DefaultContainer);
+        }
 
-        Assert.NotNull(resolvedOptions);
-        Assert.Equal(options.ConnectionString, resolvedOptions.ConnectionString);
-        Assert.Equal(options.MaxSasUriExpiration, resolvedOptions.MaxSasUriExpiration);
-        Assert.Equal(options.DefaultSasUriExpiration, resolvedOptions.DefaultSasUriExpiration);
-        Assert.Equal(options.CreateContainerIfNotExists, resolvedOptions.CreateContainerIfNotExists);
-        Assert.NotNull(wrapper);
-    }
-
-    [Fact]
-    public void AddAzureStorageWrapper_WithOptionsAction_ShouldAddServices()
-    {
-        // Arrange
-        var serviceCollection = new ServiceCollection();
-
-        // Act
-        serviceCollection.AddAzureStorageWrapper(options =>
+        [Fact]
+        public void AddAzureStorageWrapper_WithConnectionStringAndContainer_ShouldConfigureServices()
         {
-            options.ConnectionString = "UseDevelopmentStorage=true";
-            options.MaxSasUriExpiration = 600;
-            options.DefaultSasUriExpiration = 300;
-            options.CreateContainerIfNotExists = true;
-        });
+            // Arrange
+            var services = new ServiceCollection();
+            var connectionString = "TestConnectionString";
+            var defaultContainer = "TestContainer";
 
-        // Assert
-        var serviceProvider = serviceCollection.BuildServiceProvider();
-        var options = serviceProvider.GetService<AzureStorageWrapperOptions>();
-        var wrapper = serviceProvider.GetService<IAzureStorageWrapper>();
+            // Act
+            services.AddAzureStorageWrapper(connectionString, defaultContainer);
 
-        Assert.NotNull(options);
-        Assert.Equal("UseDevelopmentStorage=true", options.ConnectionString);
-        Assert.Equal(600, options.MaxSasUriExpiration);
-        Assert.Equal(300, options.DefaultSasUriExpiration);
-        Assert.True(options.CreateContainerIfNotExists);
-        Assert.NotNull(wrapper);
+            // Assert
+            var serviceProvider = services.BuildServiceProvider();
+            var options = serviceProvider.GetService<AzureStorageWrapperOptions>();
+            Assert.NotNull(options);
+            Assert.Equal(connectionString, options.ConnectionString);
+            Assert.Equal(defaultContainer, options.DefaultContainer);
+        }
+
+        [Fact]
+        public void AddAzureStorageWrapper_WithOptions_ShouldConfigureServices()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+            var options = new AzureStorageWrapperOptions
+            {
+                ConnectionString = "TestConnectionString",
+                DefaultContainer = "TestContainer",
+                MaxSasUriExpiration = 600,
+                DefaultSasUriExpiration = 300,
+                CreateContainerIfNotExists = true
+            };
+
+            // Act
+            services.AddAzureStorageWrapper(options);
+
+            // Assert
+            var serviceProvider = services.BuildServiceProvider();
+            var resolvedOptions = serviceProvider.GetService<AzureStorageWrapperOptions>();
+            Assert.NotNull(resolvedOptions);
+            Assert.Equal(options.ConnectionString, resolvedOptions.ConnectionString);
+            Assert.Equal(options.DefaultContainer, resolvedOptions.DefaultContainer);
+            Assert.Equal(options.MaxSasUriExpiration, resolvedOptions.MaxSasUriExpiration);
+            Assert.Equal(options.DefaultSasUriExpiration, resolvedOptions.DefaultSasUriExpiration);
+            Assert.Equal(options.CreateContainerIfNotExists, resolvedOptions.CreateContainerIfNotExists);
+        }
+
+        [Fact]
+        public void AddAzureStorageWrapper_WithOptionsAction_ShouldConfigureServices()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+
+            // Act
+            services.AddAzureStorageWrapper(options =>
+            {
+                options.ConnectionString = "TestConnectionString";
+                options.DefaultContainer = "TestContainer";
+                options.MaxSasUriExpiration = 600;
+                options.DefaultSasUriExpiration = 300;
+                options.CreateContainerIfNotExists = true;
+            });
+
+            // Assert
+            var serviceProvider = services.BuildServiceProvider();
+            var options = serviceProvider.GetService<AzureStorageWrapperOptions>();
+            Assert.NotNull(options);
+            Assert.Equal("TestConnectionString", options.ConnectionString);
+            Assert.Equal("TestContainer", options.DefaultContainer);
+            Assert.Equal(600, options.MaxSasUriExpiration);
+            Assert.Equal(300, options.DefaultSasUriExpiration);
+            Assert.True(options.CreateContainerIfNotExists);
+        }
     }
 }

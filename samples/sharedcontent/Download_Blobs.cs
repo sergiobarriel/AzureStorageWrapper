@@ -18,13 +18,26 @@ namespace samples
         public async Task RunAllAsync()
         {
             ConsoleHelper.Module("****  DOWNLOAD BLOBS ****");
-            await DownloadBlobReferencesAsync();
+            await DownloadBlobReferencesByUriAsync();
+            await DownloadBlobReferencesByCommandAsync();
+            await DownloadBlobByUriAsync();
+            await DownloadBlobByCommandAsync();
         }
 
-        public async Task DownloadBlobReferencesAsync()
+        public async Task DownloadBlobReferencesByUriAsync()
         {
-            var uri = await UploadFileAsynt();
-            ConsoleHelper.Start("Download Blob References");
+            var uri = await UploadFileAsync();
+            ConsoleHelper.Start("Download Blob References by Uri");
+
+            var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(uri);
+
+            ConsoleHelper.Result(response);
+            ConsoleHelper.Finalized("Download Blob References by Uri");
+        }
+        public async Task DownloadBlobReferencesByCommandAsync()
+        {
+            var uri = await UploadFileAsync();
+            ConsoleHelper.Start("Download Blob References by Command");
             var query = new DownloadBlobReference()
             {
                 Uri = uri,
@@ -33,11 +46,36 @@ namespace samples
 
             var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(query); ConsoleHelper.Result(response);
             ConsoleHelper.Result(response);
-            ConsoleHelper.Finalized("Download Blob References");
+            ConsoleHelper.Finalized("Download Blob References by Command");
+        }
+
+        public async Task DownloadBlobByUriAsync()
+        {
+            var uri = await UploadFileAsync();
+            ConsoleHelper.Start("Download Blob by Uri");
+
+            var response = await _azureStorageWrapper.DownloadBlobAsync(uri);
+
+            ConsoleHelper.Result(response);
+            ConsoleHelper.Finalized("Download Blob by Uri");
+        }
+        public async Task DownloadBlobByCommandAsync()
+        {
+            var uri = await UploadFileAsync();
+            ConsoleHelper.Start("Download Blob by Command");
+            var query = new DownloadBlob()
+            {
+                Uri = uri,
+            };
+
+            var response = await _azureStorageWrapper.DownloadBlobAsync(query);
+
+            ConsoleHelper.Result(response);
+            ConsoleHelper.Finalized("Download Blob by Command");
         }
 
 
-        private async Task<string> UploadFileAsynt()
+        private async Task<string> UploadFileAsync()
         {
             var base64 = "SGVsbG8g8J+Zgg==";
 

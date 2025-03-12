@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Threading.Tasks;
 using AzureStorageWrapper;
 using AzureStorageWrapper.Queries;
@@ -16,13 +17,26 @@ namespace samples
         {
             ConsoleHelper.Module("****  ENUMERATE BLOBS ****");
             await EnumerateWithoutPaginationAsync();
+            await EnumerateWithoutPaginationByCommandAsync();
             await EnumerateWithPaginationWithoutContinationTokenAsync();
-            await EnumerateWithPaginationWithContinationTokenAsync();
+            await EnumerateWithPaginationWithoutContinationTokenByCommandAsync();
+            await EnumerateWithPaginationWithContinationTokenByCommandAsync();
         }
 
         public async Task EnumerateWithoutPaginationAsync()
         {
             ConsoleHelper.Start("Enumerate Blobs without Pagination");
+            var container = "files";
+
+            //var response = await _azureStorageWrapper.EnumerateBlobsAsync(); //You will need to set the DefaultContainer option.
+            var response = await _azureStorageWrapper.EnumerateBlobsAsync(container);
+
+            ConsoleHelper.Result(response);
+            ConsoleHelper.Finalized("Enumerate Blobs without Pagination");
+        }
+        public async Task EnumerateWithoutPaginationByCommandAsync()
+        {
+            ConsoleHelper.Start("Enumerate Blobs without Pagination by Command");
             var query = new EnumerateBlobs()
             {
                 Container = "files",
@@ -31,12 +45,24 @@ namespace samples
 
             var response = await _azureStorageWrapper.EnumerateBlobsAsync(query);
             ConsoleHelper.Result(response);
-            ConsoleHelper.Finalized("Enumerate Blobs without Pagination");
+            ConsoleHelper.Finalized("Enumerate Blobs without Pagination by Command");
         }
 
         public async Task EnumerateWithPaginationWithoutContinationTokenAsync()
         {
             ConsoleHelper.Start("Enumerate Blobs with Pagination and without ContinationToken");
+            var container = "files";
+            var size = 10;
+
+            //var response = await _azureStorageWrapper.EnumerateBlobsAsync(size); //You will need to set the DefaultContainer option.
+            var response = await _azureStorageWrapper.EnumerateBlobsAsync(size, container);
+
+            ConsoleHelper.Result(response);
+            ConsoleHelper.Finalized("Enumerate Blobs with Pagination and without ContinationToken");
+        }
+        public async Task EnumerateWithPaginationWithoutContinationTokenByCommandAsync()
+        {
+            ConsoleHelper.Start("Enumerate Blobs with Pagination and without ContinationToken by Command");
             var query = new EnumerateBlobs()
             {
                 Container = "files",
@@ -46,10 +72,10 @@ namespace samples
 
             var response = await _azureStorageWrapper.EnumerateBlobsAsync(query);
             ConsoleHelper.Result(response);
-            ConsoleHelper.Finalized("Enumerate Blobs with Pagination and without ContinationToken");
+            ConsoleHelper.Finalized("Enumerate Blobs with Pagination and without ContinationToken by Command");
         }
 
-        public async Task EnumerateWithPaginationWithContinationTokenAsync()
+        public async Task EnumerateWithPaginationWithContinationTokenByCommandAsync()
         {
             ConsoleHelper.Start("Enumerate Blobs with Pagination and with ContinationToken");
             var firstQuery = new EnumerateBlobs()

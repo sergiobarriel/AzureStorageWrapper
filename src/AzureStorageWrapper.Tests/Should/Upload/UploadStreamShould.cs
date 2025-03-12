@@ -1,4 +1,4 @@
-﻿using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Exceptions;
 using Xunit;
 
@@ -90,8 +90,64 @@ namespace AzureStorageWrapper.Tests.Should.Upload
                 _ = await _azureStorageWrapper.UploadBlobAsync(command);
             });
         }
-        
 
- 
+
+        [Fact]
+        public async Task UploadBlobStream_File_Content_EmptyDefaultContainer_Should_ThrowException()
+        {
+            var stream = new MemoryStream(Convert.FromBase64String("SGVsbG8g8J+Zgg=="));
+
+            // Arrange
+            var options = new AzureStorageWrapperOptions
+            {
+                ConnectionString = "UseDevelopmentStorage=true",
+                DefaultContainer = string.Empty, // Set DefaultContainer to empty
+                MaxSasUriExpiration = 600,
+                DefaultSasUriExpiration = 300,
+                CreateContainerIfNotExists = true
+            };
+            var azureStorageWrapper = new AzureStorageWrapper(options);
+            var file = "hello.md";
+            var contentStream = stream;
+
+            // Act and Assert
+            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
+            {
+                _ = await azureStorageWrapper.UploadBlobAsync(file, contentStream);
+            });
+        }
+        [Fact]
+        public async Task UploadBlobStream_File_Content_DefaultContainer_Should_UploadBlob()
+        {
+            var stream = new MemoryStream(Convert.FromBase64String("SGVsbG8g8J+Zgg=="));
+
+            // Arrange
+            var file = "hello.md";
+            var contentStream = stream;
+
+            // Act and Assert
+            var response = await _azureStorageWrapper.UploadBlobAsync(file, contentStream);
+
+            // Assert
+            Assert.NotNull(response);
+            Assert.True(await PingAsync(response.SasUri));
+        }
+        [Fact]
+        public async Task UploadBlobStream_File_Content_CustomContainer_Should_UploadBlob()
+        {
+            var stream = new MemoryStream(Convert.FromBase64String("SGVsbG8g8J+Zgg=="));
+
+            // Arrange
+            var file = "hello.md";
+            var contentStream = stream;
+            var container = "files";
+
+            // Act and Assert
+            var response = await _azureStorageWrapper.UploadBlobAsync(file, contentStream, container);
+
+            // Assert
+            Assert.NotNull(response);
+            Assert.True(await PingAsync(response.SasUri));
+        }
     }
 }

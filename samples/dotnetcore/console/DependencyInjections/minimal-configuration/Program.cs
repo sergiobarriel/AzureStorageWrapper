@@ -15,6 +15,8 @@ var host = Host.CreateDefaultBuilder(args)
                })
                .ConfigureServices((context, services) => {
                    Environment.SetEnvironmentVariable("StorageWrapper_ConnectionString", context.Configuration["StorageWrapper_ConnectionString"]);// Set the StorageWrapper_ConnectionString string in the environment variables
+                   // The default container used for all storage operations if not specified explicitly. It is optional
+                   Environment.SetEnvironmentVariable("StorageWrapper_DefaultContainer", context.Configuration["StorageWrapper_DefaultContainer"]);
                    services.AddAzureStorageWrapper();//Configuration AzureStorageWrapper
 
                    services.AddExample_All();//Configuration Example_All

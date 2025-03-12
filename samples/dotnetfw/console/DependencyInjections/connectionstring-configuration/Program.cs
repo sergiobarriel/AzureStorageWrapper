@@ -17,6 +17,10 @@ namespace samples
                 var connectionString = configuration["StorageWrapper_ConnectionString"];// Set the StorageWrapper_ConnectionString string in the environment variables
                 services.AddAzureStorageWrapper(connectionString);//Configuration AzureStorageWrapper
 
+                // The default container used for all storage operations if not specified explicitly. It is optional
+                //var defaultContainer = configuration["StorageWrapper_DefaultContainer"];// Set the StorageWrapper_ConnectionString string in the environment variables
+                //services.AddAzureStorageWrapper(connectionString, defaultContainer);//Configuration AzureStorageWrapper
+
                 services.AddExample_All();//Configuration Example_All
 
             });

@@ -15,12 +15,14 @@ namespace samples
             var serviceProvider = ConfigureServices((configuration, services) =>
             {
                 var connectionString = configuration["StorageWrapper_ConnectionString"];// Set the StorageWrapper_ConnectionString string in the environment variables
+                var defaultContainer = configuration["StorageWrapper_DefaultContainer"];// Set the StorageWrapper_ConnectionString string in the environment variables
                 services.AddAzureStorageWrapper(options =>
                 {
                     options.ConnectionString = connectionString;
                     options.MaxSasUriExpiration = 600;
                     options.DefaultSasUriExpiration = 300;
                     options.CreateContainerIfNotExists = true;
+                    //options.DefaultContainer = defaultContainer;// The default container used for all storage operations if not specified explicitly. It is optional
                 });//Configuration AzureStorageWrapper
 
                 services.AddExample_All();//Configuration Example_All

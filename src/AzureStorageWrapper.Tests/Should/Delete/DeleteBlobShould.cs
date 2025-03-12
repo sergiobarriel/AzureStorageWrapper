@@ -1,4 +1,4 @@
-﻿using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Commands;
 using Xunit;
 
 namespace AzureStorageWrapper.Tests.Should.Delete
@@ -39,6 +39,33 @@ namespace AzureStorageWrapper.Tests.Should.Delete
             };
 
             await _azureStorageWrapper.DeleteBlobAsync(deleteCommand);
+
+            Assert.False(await PingAsync(response.SasUri));
+
+        }
+
+        [Fact]
+        public async Task DeleteBlob_Uri_ShouldDeleteBlob()
+        {
+            var base64 = "SGVsbG8g8J+Zgg==";
+
+            var uploadCommand = new UploadBase64()
+            {
+                Base64 = base64,
+                Container = "files",
+                Name = "hello",
+                Extension = "md",
+                Metadata = new Dictionary<string, string>()
+                    {{"hello", "world"}}
+            };
+
+            var response = await _azureStorageWrapper.UploadBlobAsync(uploadCommand);
+
+            Assert.NotNull(response);
+
+            Assert.True(await PingAsync(response.SasUri));
+
+            await _azureStorageWrapper.DeleteBlobAsync(response.Uri);
 
             Assert.False(await PingAsync(response.SasUri));
 

@@ -51,6 +51,7 @@ This command is intended to be used within the Package Manager Console in Visual
         StorageWrapper_MaxSasUriExpiration="..." //It sets the maximum duration for the Shared Access Signature (SAS) URI of an Azure Storage file. Type: int. Default: 600. Optional
         StorageWrapper_DefaultSasUriExpiration="..." //It sets the default duration for the Shared Access Signature (SAS) URI of an Azure Storage file. Type: int. Default: 300. Optional
         StorageWrapper_ReateContainerIfNotExists="..." //Determines whether the Azure Storage container should be automatically created if it does not already exist.Type: bool. Defult: true. Optional
+        StorageWrapper_DefaultContainer="..." // Specifies the default container name to be used for storing blobs. Type: String. Optional
     }
 }
 ```
@@ -63,6 +64,7 @@ This command is intended to be used within the Package Manager Console in Visual
         StorageWrapper_MaxSasUriExpiration="..." //It sets the maximum duration for the Shared Access Signature (SAS) URI of an Azure Storage file. Type: int. Default: 600. Optional
         StorageWrapper_DefaultSasUriExpiration="..." //It sets the default duration for the Shared Access Signature (SAS) URI of an Azure Storage file. Type: int. Default: 300. Optional
         StorageWrapper_ReateContainerIfNotExists="..." //Determines whether the Azure Storage container should be automatically created if it does not already exist.Type: bool. Defult: true. Optional
+        StorageWrapper_DefaultContainer="..." // Specifies the default container name to be used for storing blobs. Type: String. Optional
 }
 ```
 
@@ -98,6 +100,7 @@ builder.Services.AddAzureStorageWrapper(options =>
     options.MaxSasUriExpiration = 600;
     options.DefaultSasUriExpiration = 300;
     options.CreateContainerIfNotExists = true;
+    options.DefaultContainer = "azure-container-name";
 });
 ```
 
@@ -106,6 +109,7 @@ These are the *main* properties:
 - **MaxSasUriExpiration**: You can set a maximum duration value for the Shared Access Signature (SAS) of an Azure Storage file to prevent someone from attempting to generate a token with a longer expiration time. The duration is expressed in seconds.
 - **DefaultSasUriExpiration**: You can download a file using AzureStorageWrapper without specifying the `ExpiresIn` property. By doing so, this value will be automatically set. The duration is xpressed in seconds
 - **CreateContainerIfNotExists**: When uploading a file to Azure Storage, you need to specify the container, which may not exist and can be created automatically. You can set it to `true` or `false` based on your requirements. Consider this property if you have automated your infrastructure with an Infrastructure as Code (IaC) mechanism because it affects the state of your infrastructure.
+- **DefaultContainer**: Specifies the default container name to be used for storing blobs when no container name is provided during the upload or enumeration operations. Option is designed to simplify the configuration when you are using a single container in your solution. By setting a default container, you avoid the need to specify the container name for every operation, making the code cleaner and reducing the risk of errors. 
 
 Then you can inject `IAzureStorageWrapper` into your services through constructor:
 
@@ -150,6 +154,26 @@ var command = new UploadBase64()
 var response = await _azureStorageWrapper.UploadBlobAsync(command);
 ```
 
+```csharp
+//If the DefaultContainer option is set
+var base64 = "SGVsbG8g8J+Zgg==";
+
+var file = "hello.md";
+var contentBase64 = base64;
+
+var response = await _azureStorageWrapper.UploadBlobAsync(file, contentBase64);
+```
+
+```csharp
+var base64 = "SGVsbG8g8J+Zgg==";
+
+var file = "hello.md";
+var contentBase64 = base64;
+var container = "files";
+
+var response = await _azureStorageWrapper.UploadBlobAsync(file, contentBase64,container);
+```
+
 ### Byte []
 
 ```csharp
@@ -167,6 +191,26 @@ var command = new UploadBytes()
 var response = await _azureStorageWrapper.UploadBlobAsync(command);
 ```
 
+```csharp
+//If the DefaultContainer option is set
+var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");
+
+var file = "hello.md";
+var contentBytes = bytes;
+
+var response = await _azureStorageWrapper.UploadBlobAsync(file, contentBytes);
+```
+
+```csharp
+var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");
+
+var file = "hello.md";
+var contentBytes = bytes;
+var container = "files";
+
+var response = await _azureStorageWrapper.UploadBlobAsync(file, contentBytes,container);
+```
+
 ### Stream
 
 ```csharp
@@ -182,6 +226,26 @@ var command = new UploadStream()
 };
 
 var response = await _azureStorageWrapper.UploadBlobAsync(command);
+```
+
+```csharp
+//If the DefaultContainer option is set
+var stream = new MemoryStream(Convert.FromBase64String("SGVsbG8g8J+Zgg=="));
+
+var file = "hello.md";
+var contentStream = stream;
+
+var response = await _azureStorageWrapper.UploadBlobAsync(file, contentStream);
+```
+
+```csharp
+var stream = new MemoryStream(Convert.FromBase64String("SGVsbG8g8J+Zgg=="));
+
+var file = "hello.md";
+var contentStream = stream;
+var container = "files";
+
+var response = await _azureStorageWrapper.UploadBlobAsync(file, contentStream,container);
 ```
 
 ## Response after upload blobs
@@ -263,6 +327,12 @@ var query = new DownloadBlobReference()
 var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(query);
 ```
 
+```csharp
+var uri = "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md",
+
+var response = await _azureStorageWrapper.DownloadBlobReferenceAsync(uri);
+```
+
 The response when *downloading* file reference resembles the response when *uploading* files:
 
 ```json
@@ -292,6 +362,12 @@ var command = new DeleteBlob()
 await _azureStorageWrapper.DeleteBlobAsync(command);
 ```
 
+```csharp
+var uri = "https://accountName.blob.core.windows.net/files/5a19306fc5014a4/hello.md"
+
+await _azureStorageWrapper.DeleteBlobAsync(uri);
+```
+
 ## Enumerate blobs
 
 You can list all blobs in a container by using the method `EnumerateBlobsAsync`. 
@@ -312,6 +388,16 @@ var query = new EnumerateBlobs()
 var response = await _azureStorageWrapper.EnumerateBlobsAsync(query);
 ```
 
+```csharp
+//If the DefaultContainer option is set
+var response = await _azureStorageWrapper.EnumerateBlobsAsync();
+```
+
+```csharp
+var container = "files";
+var response = await _azureStorageWrapper.EnumerateBlobsAsync(container);
+```
+
 ### With pagination
 
 ```csharp
@@ -325,6 +411,20 @@ var query = new EnumerateBlobs()
 var response = await _azureStorageWrapper.EnumerateBlobsAsync(query);
 
 ```
+
+```csharp
+//If the DefaultContainer option is set
+var size = 10;
+var response = await _azureStorageWrapper.EnumerateBlobsAsync(size);
+
+```
+
+```csharp
+var size = 10;
+var container = "files";
+var response = await _azureStorageWrapper.EnumerateBlobsAsync(size, container);
+```
+
 Then you can request additional pages by using the `ContinuationToken` property in the next request.
 
 ```csharp

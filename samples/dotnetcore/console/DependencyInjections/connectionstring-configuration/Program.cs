@@ -17,6 +17,10 @@ var host = Host.CreateDefaultBuilder(args)
                    var connectionString = context.Configuration["StorageWrapper_ConnectionString"];// Get the StorageWrapper_ConnectionString string from the configuration
                    services.AddAzureStorageWrapper(connectionString);//Configuration AzureStorageWrapper
 
+                   // The default container used for all storage operations if not specified explicitly. It is optional
+                   //var defaultContainer = context.Configuration["StorageWrapper_DefaultContainer"];
+                   //services.AddAzureStorageWrapper(connectionString, defaultContainer);//Configuration AzureStorageWrapper 
+
                    services.AddExample_All();//Configuration Example_All
 
                })

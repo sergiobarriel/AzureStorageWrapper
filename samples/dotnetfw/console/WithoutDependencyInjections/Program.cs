@@ -18,6 +18,7 @@ namespace samples
                 MaxSasUriExpiration = 600,
                 DefaultSasUriExpiration = 300,
                 CreateContainerIfNotExists = true,
+                //DefaultContainer ="files" // The default container used for all storage operations if not specified explicitly. It is optional
             };
             var azureStorageWrapper = new AzureStorageWrapper.AzureStorageWrapper(options);
 
