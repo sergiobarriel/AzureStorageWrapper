@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -11,31 +11,30 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Exceptions;
+using AzureStorageWrapper.Extensions;
 using AzureStorageWrapper.Queries;
 using AzureStorageWrapper.Responses;
+using EnsureThat;
 
 namespace AzureStorageWrapper
 {
     public class AzureStorageWrapper : AzureStorageWrapperBase, IAzureStorageWrapper
     {
-        private readonly AzureStorageWrapperConfiguration _configuration;
+        private readonly AzureStorageWrapperOptions _options;
 
-        public AzureStorageWrapper(AzureStorageWrapperConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        public AzureStorageWrapper(AzureStorageWrapperOptions options)
+            => _options = options;
 
         public async Task<BlobReference> UploadBlobAsync(UploadBlob command)
         {
             command.Validate();
            
-            var container = new BlobContainerClient(_configuration.ConnectionString, command.Container);
+            var container = new BlobContainerClient(_options.ConnectionString, command.Container);
             
             if (!await container.ExistsAsync())
             {
-                if (_configuration.CreateContainerIfNotExists) await container.CreateIfNotExistsAsync();
-                
-                else throw new AzureStorageWrapperException($"container {command.Container} doesn't exists!");
+                Ensure.Bool.IsNotExistContainer(_options.CreateContainerIfNotExists, command.Container);
+                await container.CreateIfNotExistsAsync();
             }
 
             var blobName = command.UseVirtualFolder
@@ -53,7 +52,7 @@ namespace AzureStorageWrapper
             var sasUri = await GetSasUriAsync(new GetSasUri()
             {
                 Uri = blob.Uri.AbsoluteUri,
-                ExpiresIn = _configuration.DefaultSasUriExpiration,
+                ExpiresIn = _options.DefaultSasUriExpiration,
             });
 
             var blobReference = new BlobReference()
@@ -64,7 +63,7 @@ namespace AzureStorageWrapper
                 Uri = blob.Uri.AbsoluteUri,
                 SasUri = sasUri,
                 Metadata = sanitizedDictionary,
-                SasExpires = DateTime.UtcNow.AddSeconds(_configuration.DefaultSasUriExpiration)
+                SasExpires = DateTime.UtcNow.AddSeconds(_options.DefaultSasUriExpiration)
             };
 
             return blobReference;
@@ -73,11 +72,11 @@ namespace AzureStorageWrapper
         
         public async Task<BlobReference> DownloadBlobReferenceAsync(DownloadBlobReference command)
         {
-            command.Validate(_configuration);
+            command.Validate(_options);
 
             var blob = new BlobClient(new Uri(command.Uri));
             
-            var container = new BlobContainerClient(_configuration.ConnectionString, blob.BlobContainerName);
+            var container = new BlobContainerClient(_options.ConnectionString, blob.BlobContainerName);
             
             var blobClient = container.GetBlobClient(blob.Name);
 
@@ -93,7 +92,7 @@ namespace AzureStorageWrapper
                 {
                     Uri = command.Uri,
                     ExpiresIn = command.ExpiresIn <= 0
-                        ? _configuration.DefaultSasUriExpiration
+                        ? _options.DefaultSasUriExpiration
                         : command.ExpiresIn,
                 }),
                 SasExpires = DateTime.MaxValue,
@@ -108,17 +107,14 @@ namespace AzureStorageWrapper
             var sasUri = await GetSasUriAsync(new GetSasUri()
             {
                 Uri = command.Uri,
-                ExpiresIn = _configuration.DefaultSasUriExpiration,
+                ExpiresIn = _options.DefaultSasUriExpiration,
             });
             
             using (var httpClient = new HttpClient())
             {
                 var response = await httpClient.GetAsync(sasUri);
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new AzureStorageWrapperException($"something went wrong when downloading blob {command.Uri}");
-                }
+                Ensure.Bool.IsTrue(response.IsSuccessStatusCode, $"something went wrong when downloading blob {command.Uri}");
 
                 var stream = await response.Content.ReadAsStreamAsync();
                 
@@ -135,7 +131,7 @@ namespace AzureStorageWrapper
 
             var blob = new BlobClient(new Uri(command.Uri));
             
-            var container = new BlobContainerClient(_configuration.ConnectionString, blob.BlobContainerName);
+            var container = new BlobContainerClient(_options.ConnectionString, blob.BlobContainerName);
             
             var blobClient = container.GetBlobClient(blob.Name);
 
@@ -146,7 +142,7 @@ namespace AzureStorageWrapper
         {
             command.Validate();
             
-            var container = new BlobContainerClient(_configuration.ConnectionString, command.Container);
+            var container = new BlobContainerClient(_options.ConnectionString, command.Container);
 
             var segment = container
                 .GetBlobsAsync()
@@ -165,7 +161,7 @@ namespace AzureStorageWrapper
                     var blobReference = await DownloadBlobReferenceAsync(new DownloadBlobReference()
                     {
                         Uri = $"{container.Uri}/{item.Name}",
-                        ExpiresIn = _configuration.DefaultSasUriExpiration
+                        ExpiresIn = _options.DefaultSasUriExpiration
                     });
 
                     references.Add(blobReference);
@@ -186,11 +182,11 @@ namespace AzureStorageWrapper
       
         private async Task<string> GetSasUriAsync(GetSasUri command)
         {
-            command.Validate(_configuration);
+            command.Validate(_options);
 
             var blob = new BlobClient(new Uri(command.Uri));
             
-            var container = new BlobContainerClient(_configuration.ConnectionString, blob.BlobContainerName);
+            var container = new BlobContainerClient(_options.ConnectionString, blob.BlobContainerName);
             
             var blobClient = container.GetBlobClient(blob.Name);
 

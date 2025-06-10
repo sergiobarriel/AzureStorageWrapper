@@ -1,10 +1,10 @@
-﻿using AzureStorageWrapper.Exceptions;
+using AzureStorageWrapper.Exceptions;
 
 namespace AzureStorageWrapper
 {
-    public class AzureStorageWrapperConfiguration
+    public class AzureStorageWrapperOptions
     {
-        public AzureStorageWrapperConfiguration()
+        public AzureStorageWrapperOptions()
         {
             MaxSasUriExpiration = int.MaxValue;
         }

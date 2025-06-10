@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
-using AzureStorageWrapper.Exceptions;
+using AzureStorageWrapper.Extensions;
+using EnsureThat;
 
 namespace AzureStorageWrapper.Commands
 {
@@ -28,14 +30,9 @@ namespace AzureStorageWrapper.Commands
         
         internal void Validate()
         {
-            if (string.IsNullOrEmpty(Container))
-                throw new AzureStorageWrapperException($"{nameof(Container)} is empty!");
-
-            if (string.IsNullOrEmpty(Name))
-                throw new AzureStorageWrapperException($"{nameof(Name)} is empty!");
-
-            if (string.IsNullOrEmpty(Extension))
-                throw new AzureStorageWrapperException($"{nameof(Extension)} is empty!");
+            Ensure.String.IsNotNullOrEmptySW(Container);
+            Ensure.String.IsNotNullOrEmptySW(Name);
+            Ensure.String.IsNotNullOrEmptySW(Extension);
         }
     }
 }
