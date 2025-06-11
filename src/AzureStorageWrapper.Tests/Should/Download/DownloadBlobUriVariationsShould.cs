@@ -1,4 +1,4 @@
-﻿using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Queries;
 using AzureStorageWrapper.Tests.Sources;
 using Xunit;
@@ -84,6 +84,5 @@ namespace AzureStorageWrapper.Tests.Should.Download
             
             Assert.True(await PingAsync(response.SasUri));
         }
-
     }
 }

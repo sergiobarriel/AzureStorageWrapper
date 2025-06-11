@@ -6,15 +6,16 @@ namespace AzureStorageWrapper
     public static class DependencyInjection
     {
         public static IServiceCollection AddAzureStorageWrapper(this IServiceCollection serviceCollection)
-            => AddAzureStorageWrapper(serviceCollection, Environment.GetEnvironmentVariable("StorageWrapper_ConnectionString"));
+            => AddAzureStorageWrapper(serviceCollection, Environment.GetEnvironmentVariable("StorageWrapper_ConnectionString"), Environment.GetEnvironmentVariable("StorageWrapper_DefaultContainer"));
 
-        public static IServiceCollection AddAzureStorageWrapper(this IServiceCollection serviceCollection, string connectionstring)
+        public static IServiceCollection AddAzureStorageWrapper(this IServiceCollection serviceCollection, string connectionstring,string defaultContainer=null)
             => serviceCollection.AddAzureStorageWrapper(new AzureStorageWrapperOptions
             {
                 ConnectionString = connectionstring,
                 MaxSasUriExpiration = 600,
                 DefaultSasUriExpiration = 300,
-                CreateContainerIfNotExists = true
+                CreateContainerIfNotExists = true,
+                DefaultContainer = defaultContainer
             });
 
         public static IServiceCollection AddAzureStorageWrapper(this IServiceCollection serviceCollection, AzureStorageWrapperOptions options)

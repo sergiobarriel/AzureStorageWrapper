@@ -1,4 +1,4 @@
-﻿using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Exceptions;
 using Xunit;
 
@@ -92,5 +92,62 @@ namespace AzureStorageWrapper.Tests.Should.Upload
             });
         }
 
+
+        [Fact]
+        public async Task UploadBlobBytes_File_Content_EmptyDefaultContainer_Should_ThrowException()
+        {
+            var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");
+            // Arrange
+            var options = new AzureStorageWrapperOptions
+            {
+                ConnectionString = "UseDevelopmentStorage=true",
+                DefaultContainer = string.Empty, // Set DefaultContainer to empty
+                MaxSasUriExpiration = 600,
+                DefaultSasUriExpiration = 300,
+                CreateContainerIfNotExists = true
+            };
+            var azureStorageWrapper = new AzureStorageWrapper(options);
+            var file = "hello.md";
+            var contentBytes = bytes;
+
+            // Act and Assert
+            await Assert.ThrowsAsync<AzureStorageWrapperException>(async () =>
+            {
+                _ = await azureStorageWrapper.UploadBlobAsync(file, contentBytes);
+            });
+        }
+        [Fact]
+        public async Task UploadBlobBytes_File_Content_DefaultContainer_Should_UploadBlob()
+        {
+            var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");
+
+            // Arrange
+            var file = "hello.md";
+            var contentBytes = bytes;
+
+            // Act and Assert
+            var response = await _azureStorageWrapper.UploadBlobAsync(file, contentBytes);
+
+            // Assert
+            Assert.NotNull(response);
+            Assert.True(await PingAsync(response.SasUri));
+        }
+        [Fact]
+        public async Task UploadBlobBytes_File_Content_CustomContainer_Should_UploadBlob()
+        {
+            var bytes = Convert.FromBase64String("SGVsbG8g8J+Zgg==");
+
+            // Arrange
+            var file = "hello.md";
+            var contentBytes = bytes;
+            var container = "files";
+
+            // Act and Assert
+            var response = await _azureStorageWrapper.UploadBlobAsync(file, contentBytes, container);
+
+            // Assert
+            Assert.NotNull(response);
+            Assert.True(await PingAsync(response.SasUri));
+        }
     }
 }

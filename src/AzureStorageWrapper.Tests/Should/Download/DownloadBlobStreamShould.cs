@@ -1,4 +1,5 @@
-﻿using AzureStorageWrapper.Commands;
+using Azure;
+using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Exceptions;
 using AzureStorageWrapper.Queries;
 using AzureStorageWrapper.Tests.Sources;
@@ -57,8 +58,36 @@ namespace AzureStorageWrapper.Tests.Should.Download
             Assert.NotNull(response.Stream);
             Assert.True(response.Stream.Length > 0);
         }
-        
-        
+
+        [Fact]
+        public async Task DownloadBlob_Uri_Should_ReturnBlob()
+        {
+            // Arrange
+
+            var base64 = "SGVsbG8g8J+Zgg==";
+
+            var uploadBlobCommand = new UploadBase64()
+            {
+                Base64 = base64,
+                Container = "files",
+                Name = "hello",
+                Extension = "md",
+                Metadata = new Dictionary<string, string>()
+                    {{"hello", "world"}}
+            };
+
+            var uploadBlobResponse = await _azureStorageWrapper.UploadBlobAsync(uploadBlobCommand);
+
+            // Act
+            var response = await _azureStorageWrapper.DownloadBlobAsync(uploadBlobResponse.Uri);
+
+            // Assert
+            Assert.NotNull(response);
+
+            Assert.NotNull(response.Stream);
+            Assert.True(response.Stream.Length > 0);
+        }
+
         // [Fact]
         // public async Task DownloadBlob_WithInvalidUri_Should_ReturnBlob()
         // {

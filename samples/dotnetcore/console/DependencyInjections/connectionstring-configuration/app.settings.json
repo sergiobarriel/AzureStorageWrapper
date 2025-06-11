@@ -1,0 +1,4 @@
+{
+    "StorageWrapper_ConnectionString": "UseDevelopmentStorage=true",
+    "StorageWrapper_DefaultContainer": "files" // The default container used for all storage operations if not specified explicitly. It is optional
+}

@@ -1,4 +1,4 @@
-﻿using AzureStorageWrapper.Commands;
+using AzureStorageWrapper.Commands;
 using AzureStorageWrapper.Exceptions;
 using AzureStorageWrapper.Queries;
 using AzureStorageWrapper.Tests.Sources;
@@ -176,7 +176,34 @@ namespace AzureStorageWrapper.Tests.Should.Download
                 _ = await _azureStorageWrapper.DownloadBlobReferenceAsync(command);
             });
         }
-        
-        
+
+
+        [Fact]
+        public async Task DownloadBlobReference_Uri_Should_ReturnReference()
+        {
+            // Arrange
+
+            var base64 = "SGVsbG8g8J+Zgg==";
+
+            var uploadBlobCommand = new UploadBase64()
+            {
+                Base64 = base64,
+                Container = "files",
+                Name = "hello",
+                Extension = "md",
+                Metadata = new Dictionary<string, string>()
+                    {{"hello", "world"}}
+            };
+
+            var uploadBlobResponse = await _azureStorageWrapper.UploadBlobAsync(uploadBlobCommand);
+
+            // Act
+            var blobReference = await _azureStorageWrapper.DownloadBlobReferenceAsync(uploadBlobResponse.Uri);
+
+            // Assert
+            Assert.NotNull(blobReference);
+            Assert.True(await PingAsync(blobReference.SasUri));
+        }
+
     }
 }
